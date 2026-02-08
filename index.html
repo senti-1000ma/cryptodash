@@ -88,24 +88,35 @@
 
         function addLog(agent, message, type = 'info') {
             const entry = document.createElement('div');
-            entry.style.marginBottom = '10px';
+            entry.style.marginBottom = '12px';
+            entry.style.paddingLeft = '5px';
+            entry.style.borderLeft = '3px solid transparent';
             const time = new Date().toLocaleTimeString();
             
             let color = '#94a3b8';
-            if (agent === 'DeusFas') color = '#38bdf8';
-            else if (agent === 'TrendAnalyst') color = '#fbbf24';
-            else if (agent === 'RiskObserver') color = '#f87171';
-            else if (agent === 'StrategyValidator') color = '#34d399';
+            if (agent === 'DeusFas (C)') { color = '#38bdf8'; entry.style.borderLeftColor = '#38bdf8'; }
+            else if (agent === 'TrendAnalyst (Qwen)') { color = '#fbbf24'; entry.style.borderLeftColor = '#fbbf24'; }
+            else if (agent === 'RiskObserver (Gemma)') { color = '#f87171'; entry.style.borderLeftColor = '#f87171'; }
+            else if (agent === 'Sentiment (Llama)') { color = '#a78bfa'; entry.style.borderLeftColor = '#a78bfa'; }
+            else if (agent === 'Validator (DeepSeek)') { color = '#34d399'; entry.style.borderLeftColor = '#34d399'; }
 
-            entry.innerHTML = `<span style="color: #475569;">[${time}]</span> <span style="color: ${color}; font-weight: bold;">${agent}:</span> <span style="color: #e2e8f0;">${message}</span>`;
+            entry.innerHTML = `
+                <div style="font-size: 0.75rem; color: #475569; margin-bottom: 2px;">[${time}]</div>
+                <div style="display: flex; gap: 8px;">
+                    <span style="color: ${color}; font-weight: bold; min-width: 140px;">${agent}:</span>
+                    <span style="color: #e2e8f0;">${message}</span>
+                </div>
+            `;
             strategyLog.appendChild(entry);
             strategyLog.scrollTop = strategyLog.scrollHeight;
         }
 
-        // 테스트 로그 (실제 연동 시 제거 또는 자동화)
-        setTimeout(() => addLog('DeusFas', '모든 전략 에이전트들에게 알린다. 현재 BTC 변동성을 기반으로 신규 전략 토론을 시작하라.'), 2000);
-        setTimeout(() => addLog('TrendAnalyst', '현재 1시간봉 기준 강한 지지선 확인 중입니다. 상승 추세 지속 가능성을 검토하겠습니다.'), 4000);
-        setTimeout(() => addLog('RiskObserver', '주의! 주요 매물대에서 대량 매도벽 포착되었습니다. 단기 리스크 관리가 필요합니다.'), 6000);
+        // 4인 군단 가동 알림
+        setTimeout(() => addLog('DeusFas (C)', '로컬 LLM 4인 군단(Qwen, Gemma, Llama, DeepSeek) 연동 준비 완료. 총책임자 지휘 하에 전략 분석을 개시한다.'), 2000);
+        setTimeout(() => addLog('TrendAnalyst (Qwen)', 'Qwen 2.5 엔진 가동. 시장의 거시적 추세 및 기술적 지표 분석 준비 완료.'), 4000);
+        setTimeout(() => addLog('RiskObserver (Gemma)', 'Gemma 2 엔진 가동. 오더북 및 변동성 리스크 실시간 모니터링 준비 완료.'), 6000);
+        setTimeout(() => addLog('Sentiment (Llama)', 'Llama 3.1 엔진 가동. 시장 공포-탐욕 지수 및 심리적 지지선 분석 준비 완료.'), 8000);
+        setTimeout(() => addLog('Validator (DeepSeek)', 'DeepSeek R1 엔진 가동. 모든 전략의 논리적 결함 검토 및 수익성 증명 준비 완료.'), 10000);
     </script>
 
         // 하단 테이블용 추가 심볼들 (대폭 확장)
