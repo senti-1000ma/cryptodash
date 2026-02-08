@@ -3,219 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>듀스파스 크립토 대시보드</title>
+    <title>DeusFas - Crypto Strategy Command Center</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --bg-dark: #020617;
+            --panel-bg: #0f172a;
+            --accent-blue: #38bdf8;
+            --accent-gold: #fbbf24;
+            --accent-red: #f87171;
+            --accent-green: #34d399;
+            --accent-purple: #a78bfa;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
         body {
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             font-family: 'Inter', sans-serif;
             margin: 0;
-            padding: 20px;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 왼쪽: 마켓 데이터 */
+        .market-section {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            border-right: 1px solid #1e293b;
+        }
+
+        /* 오른쪽: 전략 에이전트 채팅 */
+        .chat-section {
+            width: 450px;
+            background-color: var(--panel-bg);
             display: flex;
             flex-direction: column;
-            align-items: center;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.3);
         }
-        h1 {
-            color: #38bdf8;
-            margin-bottom: 30px;
+
+        h1, h2 {
+            margin: 0 0 20px 0;
+            letter-spacing: -0.025em;
         }
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
         }
+
         .card {
-            background-color: #1e293b;
-            padding: 20px;
+            background: #1e293b;
+            padding: 16px;
             border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            transition: transform 0.2s;
+            border: 1px solid #334155;
+            transition: all 0.2s ease;
         }
-        .card:hover {
-            transform: translateY(-5px);
+
+        .card:hover { border-color: var(--accent-blue); transform: translateY(-2px); }
+
+        .symbol { font-size: 0.875rem; color: var(--text-dim); font-weight: 600; }
+        .price { font-size: 1.5rem; margin: 8px 0; font-family: 'Fira Code', monospace; }
+        .change { font-size: 0.875rem; font-weight: 600; }
+        .up { color: var(--accent-green); }
+        .down { color: var(--accent-red); }
+
+        .table-container {
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #334155;
         }
-        .symbol {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #94a3b8;
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        th { background: #334155; padding: 12px; text-align: left; color: var(--text-dim); position: sticky; top: 0; }
+        td { padding: 12px; border-bottom: 1px solid #334155; }
+
+        /* 채팅 스타일 */
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #334155;
+            background: #1e293b;
         }
-        .price {
-            font-size: 2rem;
-            margin: 10px 0;
-            font-family: monospace;
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
         }
-        .change {
-            font-size: 1rem;
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 90%;
         }
-        .up { color: #22c55e; }
-        .down { color: #ef4444; }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #334155;
+            flex-shrink: 0;
+            border: 1px solid #475569;
+        }
+
+        .msg-body {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .msg-sender {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .msg-text {
+            background: #1e293b;
+            padding: 12px;
+            border-radius: 0 12px 12px 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border: 1px solid #334155;
+            white-space: pre-wrap;
+        }
+
+        .agent-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <h1>🤖 듀스파스 실시간 시장 관찰</h1>
-    <div class="grid" id="dashboard">
-        <!-- 주요 카드가 여기에 동적으로 생성됩니다 -->
-    </div>
 
-    <h2 style="margin-top: 50px; color: #94a3b8;">📊 전체 토큰 실시간 현황 (Top 50+)</h2>
-    <div style="width: 100%; max-width: 1200px; background-color: #1e293b; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); max-height: 800px; overflow-y: auto;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-                <tr style="border-bottom: 1px solid #334155; color: #94a3b8; position: sticky; top: 0; background-color: #1e293b; z-index: 10;">
-                    <th style="padding: 10px;">심볼</th>
-                    <th style="padding: 10px;">현재가</th>
-                    <th style="padding: 10px;">24h 변동</th>
-                    <th style="padding: 10px; text-align: right;">거래대금(24h)</th>
-                </tr>
-            </thead>
-            <tbody id="token-table">
-                <!-- 로우 데이터가 여기에 생성됩니다 -->
-            </tbody>
-        </table>
-    </div>
+    <main class="market-section">
+        <h1 style="color: var(--accent-blue);">🤖 DeusFas Market Terminal</h1>
+        
+        <div class="grid" id="main-cards"></div>
 
-    <h2 style="margin-top: 50px; color: #38bdf8;">🧠 전략 에이전트 실시간 토론 로그</h2>
-    <div id="strategy-log" style="width: 100%; max-width: 1200px; height: 300px; background-color: #020617; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; line-height: 1.6; border: 1px solid #1e293b;">
-        <div style="color: #64748b;">[시스템] 듀스파스 총책임자 지휘 하에 에이전트 시스템 가동 준비 중...</div>
-    </div>
+        <h2>📊 Real-time Token List</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Price</th>
+                        <th>24h Change</th>
+                        <th style="text-align: right;">24h Volume</th>
+                    </tr>
+                </thead>
+                <tbody id="token-table"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <aside class="chat-section">
+        <div class="chat-header">
+            <h2 style="margin: 0; font-size: 1.1rem; color: var(--accent-blue);">🧠 Strategy Discussion</h2>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">4-Agent Multi-Agent System Online</div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will appear here -->
+        </div>
+    </aside>
 
     <script>
-        // 기존 스크립트 아래에 추가
-        const strategyLog = document.getElementById('strategy-log');
+        const mainSymbols = [
+            { binance: 'BTCUSDT', label: 'BTC' },
+            { binance: 'ETHUSDT', label: 'ETH' },
+            { binance: 'SOLUSDT', label: 'SOL' },
+            { binance: 'BNBUSDT', label: 'BNB' },
+            { binance: 'XRPUSDT', label: 'XRP' }
+        ];
 
-        function addLog(agent, message, type = 'info') {
-            const entry = document.createElement('div');
-            entry.style.marginBottom = '12px';
-            entry.style.paddingLeft = '5px';
-            entry.style.borderLeft = '3px solid transparent';
-            const time = new Date().toLocaleTimeString();
-            
-            let color = '#94a3b8';
-            if (agent === 'DeusFas (C)') { color = '#38bdf8'; entry.style.borderLeftColor = '#38bdf8'; }
-            else if (agent === 'TrendAnalyst (Qwen)') { color = '#fbbf24'; entry.style.borderLeftColor = '#fbbf24'; }
-            else if (agent === 'RiskObserver (Gemma)') { color = '#f87171'; entry.style.borderLeftColor = '#f87171'; }
-            else if (agent === 'Sentiment (Llama)') { color = '#a78bfa'; entry.style.borderLeftColor = '#a78bfa'; }
-            else if (agent === 'Validator (DeepSeek)') { color = '#34d399'; entry.style.borderLeftColor = '#34d399'; }
-
-            entry.innerHTML = `
-                <div style="font-size: 0.75rem; color: #475569; margin-bottom: 2px;">[${time}]</div>
-                <div style="display: flex; gap: 8px;">
-                    <span style="color: ${color}; font-weight: bold; min-width: 140px;">${agent}:</span>
-                    <span style="color: #e2e8f0;">${message}</span>
-                </div>
-            `;
-            strategyLog.appendChild(entry);
-            strategyLog.scrollTop = strategyLog.scrollHeight;
-        }
-
-        // 4인 군단 가동 알림
-        setTimeout(() => addLog('DeusFas (C)', '보안 통로 연결 성공! 천마님 PC의 Ollama 엔진과 연동되었습니다. 🚀'), 2000);
-        setTimeout(() => addLog('DeusFas (C)', '4대 천왕 에이전트(Qwen, Gemma, Llama, DeepSeek)를 모두 소집합니다.'), 4000);
-        setTimeout(() => addLog('TrendAnalyst (Qwen)', 'Qwen 2.5(14B) 엔진 정상 가동. 시장의 거시적 추세 분석을 시작합니다.'), 6000);
-        setTimeout(() => addLog('RiskObserver (Gemma)', 'Gemma 2(9B) 엔진 정상 가동. 변동성 및 리스크 모니터링 체제 돌입.'), 8000);
-        setTimeout(() => addLog('Sentiment (Llama)', 'Llama 3.1(8B) 엔진 정상 가동. 시장 공포-탐욕 및 고래 심리 분석 중.'), 10000);
-        setTimeout(() => addLog('Validator (DeepSeek)', 'DeepSeek R1(14B) 추론 엔진 가동. 도출된 전략의 논리적 결함을 철저히 검증하겠습니다.'), 12000);
-        setTimeout(() => addLog('DeusFas (C)', '첫 번째 합동 전략 회의 주제: [현재 BTCUSDT 횡보 구간에서의 단기 돌파 전략]. 에이전트들은 각자의 관점에서 의견을 제출하라.'), 15000);
-    </script>
-
-        // 하단 테이블용 추가 심볼들 (대폭 확장)
         const extraSymbols = [
             'ADAUSDT', 'DOGEUSDT', 'DOTUSDT', 'MATICUSDT', 'LINKUSDT', 
             'AVAXUSDT', 'SHIBUSDT', 'TRXUSDT', 'LTCUSDT', 'UNIUSDT',
             'NEARUSDT', 'APTUSDT', 'ARBUSDT', 'OPUSDT', 'SUIUSDT',
             'PEPEUSDT', 'RNDRUSDT', 'FETUSDT', 'INJUSDT', 'TIAUSDT',
             'SEIUSDT', 'ORDIUSDT', 'STXUSDT', 'IMXUSDT', 'BEAMXUSDT',
-            'FILUSDT', 'HBARUSDT', 'ATOMUSDT', 'KASUSDT', 'LDOUSDT',
-            'AAVEUSDT', 'MKRUSDT', 'SNXUSDT', 'RUNEUSDT', 'GRTUSDT',
-            'THETAUSDT', 'FTMUSDT', 'ALGOUSDT', 'FLOWUSDT', 'EGLDUSDT',
-            'SANDUSDT', 'MANAUSDT', 'AXSUSDT', 'WIFUSDT', 'BONKUSDT',
-            'FLOKIUSDT', 'JUPUSDT', 'PYTHUSDT', 'STRKUSDT', 'DYMUSDT',
-            'WLDUSDT', 'ARKMUSDT', 'GALAUSDT', 'JASMYUSDT', 'CHZUSDT'
+            'FILUSDT', 'HBARUSDT', 'ATOMUSDT', 'KASUSDT', 'LDOUSDT'
         ];
 
         const allSymbols = [...mainSymbols.map(s => s.binance), ...extraSymbols];
-        const dashboard = document.getElementById('dashboard');
-        const tokenTable = document.getElementById('token-table');
-        const cards = {};
-        const tableRows = {};
+        const cardsContainer = document.getElementById('main-cards');
+        const tableBody = document.getElementById('token-table');
+        const chatContainer = document.getElementById('chat-messages');
 
-        // 1. 주요 카드 초기화
-        mainSymbols.forEach(item => {
+        const state = { cards: {}, rows: {} };
+
+        // Initialize UI
+        mainSymbols.forEach(s => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-                <div class="symbol">${item.label}</div>
-                <div class="price" id="price-${item.binance}">$---</div>
-                <div class="change" id="change-${item.binance}">---%</div>
-                <div style="font-size: 0.8rem; color: #64748b; margin-top: 10px;">Binance Real-time</div>
+                <div class="symbol">${s.label}</div>
+                <div class="price" id="card-p-${s.binance}">$---</div>
+                <div class="change" id="card-c-${s.binance}">---%</div>
             `;
-            dashboard.appendChild(card);
-            cards[item.binance] = {
-                priceEl: document.getElementById(`price-${item.binance}`),
-                changeEl: document.getElementById(`change-${item.binance}`),
-                lastPrice: 0
+            cardsContainer.appendChild(card);
+            state.cards[s.binance] = { 
+                price: document.getElementById(`card-p-${s.binance}`),
+                change: document.getElementById(`card-c-${s.binance}`),
+                last: 0 
             };
         });
 
-        // 2. 하단 테이블 초기화
-        extraSymbols.forEach(symbol => {
+        extraSymbols.forEach(s => {
             const row = document.createElement('tr');
-            row.style.borderBottom = '1px solid #1e293b';
             row.innerHTML = `
-                <td style="padding: 12px; font-weight: bold; color: #38bdf8;">${symbol.replace('USDT', '')}</td>
-                <td style="padding: 12px; font-family: monospace;" id="table-price-${symbol}">---</td>
-                <td style="padding: 12px;" id="table-change-${symbol}">---</td>
-                <td style="padding: 12px; text-align: right; color: #64748b;" id="table-vol-${symbol}">---</td>
+                <td style="font-weight: 600; color: var(--accent-blue);">${s.replace('USDT','')}</td>
+                <td id="row-p-${s}" style="font-family: 'Fira Code', monospace;">---</td>
+                <td id="row-c-${s}">---</td>
+                <td id="row-v-${s}" style="text-align: right; color: var(--text-dim);">---</td>
             `;
-            tokenTable.appendChild(row);
-            tableRows[symbol] = {
-                priceEl: document.getElementById(`table-price-${symbol}`),
-                changeEl: document.getElementById(`table-change-${symbol}`),
-                volEl: document.getElementById(`table-vol-${symbol}`)
+            tableBody.appendChild(row);
+            state.rows[s] = {
+                price: document.getElementById(`row-p-${s}`),
+                change: document.getElementById(`row-c-${s}`),
+                vol: document.getElementById(`row-v-${s}`)
             };
         });
 
-        // 바이낸스 웹소켓 연결
+        // Chat System
+        const agents = {
+            'DeusFas': { name: 'DeusFas (Commander)', color: 'var(--accent-blue)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=DeusFas' },
+            'Trend': { name: 'TrendAnalyst (Qwen)', color: 'var(--accent-gold)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Qwen' },
+            'Risk': { name: 'RiskObserver (Gemma)', color: 'var(--accent-red)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Gemma' },
+            'Sentiment': { name: 'Sentiment (Llama)', color: 'var(--accent-purple)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Llama' },
+            'Validator': { name: 'Validator (DeepSeek)', color: 'var(--accent-green)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=DeepSeek' }
+        };
+
+        function addChatMessage(agentKey, text) {
+            const agent = agents[agentKey];
+            const msg = document.createElement('div');
+            msg.className = 'message';
+            msg.innerHTML = `
+                <img class="avatar" src="${agent.avatar}" alt="avatar">
+                <div class="msg-body">
+                    <div class="msg-sender">
+                        <span style="color: ${agent.color}">${agent.name}</span>
+                        <span class="agent-badge" style="background: ${agent.color}; color: #000">AI AGENT</span>
+                    </div>
+                    <div class="msg-text">${text}</div>
+                </div>
+            `;
+            chatContainer.appendChild(msg);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // WebSocket
         const socket = new WebSocket('wss://stream.binance.com:9443/ws/' + allSymbols.map(s => s.toLowerCase() + '@ticker').join('/'));
 
-        socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            const symbol = data.s;
-            const price = parseFloat(data.c).toLocaleString(undefined, { minimumFractionDigits: symbol.includes('SHIB') ? 6 : 2 });
-            const change = parseFloat(data.P).toFixed(2);
-            const volume = (parseFloat(data.q) / 1000000).toFixed(1) + 'M';
-            
-            // 카드 업데이트 (상단)
-            if (cards[symbol]) {
-                const info = cards[symbol];
-                info.priceEl.innerText = `$${price}`;
-                info.changeEl.innerText = `${change >= 0 ? '+' : ''}${change}%`;
-                info.changeEl.className = `change ${change >= 0 ? 'up' : 'down'}`;
+        socket.onmessage = (e) => {
+            const d = JSON.parse(e.data);
+            const s = d.s;
+            const p = parseFloat(d.c).toLocaleString(undefined, { minimumFractionDigits: s.includes('SHIB') ? 6 : 2 });
+            const c = parseFloat(d.P).toFixed(2);
+            const v = (parseFloat(d.q) / 1000000).toFixed(1) + 'M';
+
+            if (state.cards[s]) {
+                const item = state.cards[s];
+                item.price.innerText = `$${p}`;
+                item.change.innerText = `${c >= 0 ? '+' : ''}${c}%`;
+                item.change.className = `change ${c >= 0 ? 'up' : 'down'}`;
                 
-                const currentPrice = parseFloat(data.c);
-                if (currentPrice > info.lastPrice) info.priceEl.style.color = '#22c55e';
-                else if (currentPrice < info.lastPrice) info.priceEl.style.color = '#ef4444';
-                
-                setTimeout(() => { info.priceEl.style.color = '#f8fafc'; }, 300);
-                info.lastPrice = currentPrice;
+                const cur = parseFloat(d.c);
+                if (cur > item.last) item.price.style.color = 'var(--accent-green)';
+                else if (cur < item.last) item.price.style.color = 'var(--accent-red)';
+                setTimeout(() => { item.price.style.color = 'var(--text-main)'; }, 300);
+                item.last = cur;
             }
 
-            // 테이블 업데이트 (하단)
-            if (tableRows[symbol]) {
-                const info = tableRows[symbol];
-                info.priceEl.innerText = `$${price}`;
-                info.changeEl.innerText = `${change >= 0 ? '+' : ''}${change}%`;
-                info.changeEl.style.color = change >= 0 ? '#22c55e' : '#ef4444';
-                info.volEl.innerText = `$${volume}`;
+            if (state.rows[s]) {
+                const item = state.rows[s];
+                item.price.innerText = `$${p}`;
+                item.change.innerText = `${c >= 0 ? '+' : ''}${c}%`;
+                item.change.style.color = c >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                item.vol.innerText = `$${v}`;
             }
         };
 
-        socket.onerror = (error) => {
-            console.error('WebSocket Error:', error);
-        };
+        // Welcome Messages
+        setTimeout(() => addChatMessage('DeusFas', '총책임자 듀스파스입니다. 천마님 PC의 로컬 LLM 군단이 모두 정상 연결되었습니다. 전략 회의를 시작합니다.'), 1000);
+        setTimeout(() => addChatMessage('Trend', 'Qwen 2.5 보고합니다. 현재 BTC 횡보 돌파 시점을 포착하기 위해 기술적 지표를 정밀 분석 중입니다.'), 3000);
+        setTimeout(() => addChatMessage('Risk', 'Gemma 2입니다. 현재 단기 변동성 지표가 상승 중입니다. 무리한 진입보다는 관망을 제안합니다.'), 5000);
+        setTimeout(() => addChatMessage('Sentiment', 'Llama 3.1입니다. 커뮤니티 및 고래 지갑 이동 분석 결과, 매수 심리가 서서히 회복되고 있습니다.'), 7000);
+        setTimeout(() => addChatMessage('Validator', 'DeepSeek R1입니다. 앞선 분석들을 종합하여 최적의 손익비를 계산하고 전략의 타당성을 검증하겠습니다.'), 9000);
+
     </script>
 </body>
 </html>
