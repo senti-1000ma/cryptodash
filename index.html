@@ -3,350 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEUSFAS - CYBER COMMAND CENTER</title>
+    <title>DEUSFAS - AUTO TRADING COMMAND CENTER</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
-
         :root {
-            --neon-blue: #00f3ff;
-            --neon-pink: #ff00ff;
-            --neon-green: #00ff9f;
-            --neon-gold: #ffcc00;
-            --bg-black: #050507;
-            --panel-bg: rgba(15, 23, 42, 0.8);
-            --border-glow: 0 0 10px rgba(0, 243, 255, 0.3);
+            --neon-blue: #00f3ff; --neon-pink: #ff00ff; --neon-green: #00ff9f; --neon-gold: #ffcc00;
+            --bg-black: #050507; --text-dim: #94a3b8;
         }
-
-        body {
-            background-color: var(--bg-black);
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px;
-            color: #e2e8f0;
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Nav Header */
-        nav {
-            height: 60px;
-            background: rgba(10, 10, 15, 0.9);
-            border-bottom: 2px solid var(--neon-blue);
-            display: flex;
-            align-items: center;
-            padding: 0 30px;
-            gap: 40px;
-            z-index: 1000;
-        }
-
-        .nav-brand { font-family: 'Orbitron'; color: var(--neon-blue); font-weight: 700; font-size: 1.2rem; }
-        .nav-item { cursor: pointer; color: var(--text-dim); text-transform: uppercase; font-weight: 600; letter-spacing: 1px; transition: 0.3s; }
-        .nav-item:hover, .nav-item.active { color: var(--neon-blue); text-shadow: var(--border-glow); }
-
-        /* Main Containers */
-        #main-wrapper { display: flex; flex: 1; overflow: hidden; }
-        .view { display: none; width: 100%; height: 100%; flex: 1; }
-        .view.active { display: flex; }
-
-        /* Market View */
-        .market-section { flex: 1; padding: 30px; overflow-y: auto; border-right: 1px solid rgba(0, 243, 255, 0.2); }
+        body { background: var(--bg-black); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        .market-section { flex: 1; padding: 25px; overflow-y: auto; border-right: 1px solid rgba(0, 243, 255, 0.2); }
         .chat-section { width: 450px; background: rgba(10, 10, 15, 0.95); display: flex; flex-direction: column; border-left: 2px solid var(--neon-blue); }
 
-        /* Trading View */
-        .trading-section { flex: 1; padding: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; overflow-y: auto; }
-        .trading-panel { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 243, 255, 0.2); padding: 25px; border-radius: 4px; }
-
-        /* Common Elements */
-        h1, h2 { font-family: 'Orbitron'; color: var(--neon-blue); margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 2px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        h1, h2 { font-family: 'Orbitron'; color: var(--neon-blue); margin-bottom: 20px; letter-spacing: 2px; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 243, 255, 0.2); padding: 15px; border-radius: 4px; border-left: 4px solid var(--neon-blue); }
-        .symbol { font-size: 0.9rem; color: var(--neon-blue); }
-        .price { font-size: 1.5rem; margin: 5px 0; font-family: 'Fira Code'; }
+        .price { font-size: 1.5rem; font-family: 'Fira Code'; }
         .up { color: var(--neon-green); } .down { color: var(--neon-pink); }
 
-        .table-container { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 4px; overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { background: rgba(0, 243, 255, 0.1); padding: 12px; text-align: left; color: var(--neon-blue); }
-        td { padding: 12px; border-bottom: 1px solid rgba(0, 243, 255, 0.05); }
+        /* Chart Widget */
+        #tradingview-container { height: 400px; margin-bottom: 30px; border: 1px solid var(--neon-blue); border-radius: 4px; overflow: hidden; }
 
-        /* Trading Components */
-        .balance-card { background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), transparent); border: 1px solid var(--neon-blue); padding: 20px; margin-bottom: 20px; }
-        .btn { padding: 10px 20px; border: none; cursor: pointer; font-family: 'Orbitron'; text-transform: uppercase; font-weight: bold; border-radius: 2px; }
-        .btn-buy { background: var(--neon-green); color: #000; }
-        .btn-sell { background: var(--neon-pink); color: #000; }
-
+        /* Portfolio */
+        .portfolio-banner { background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent); border: 1px solid var(--neon-blue); padding: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Chat */
         .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
         .message { display: flex; gap: 12px; }
-        .avatar { width: 40px; height: 40px; border: 1px solid var(--neon-blue); border-radius: 4px; }
-        .msg-text { background: rgba(30, 41, 59, 0.3); padding: 10px; border-radius: 4px; border-left: 2px solid var(--neon-blue); font-size: 0.9rem; }
+        .avatar { width: 45px; height: 45px; border: 2px solid var(--neon-blue); border-radius: 4px; box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+        .msg-body { flex: 1; }
+        .msg-sender { font-family: 'Orbitron'; font-size: 0.75rem; margin-bottom: 5px; }
+        .msg-text { background: rgba(30, 41, 59, 0.3); padding: 12px; border-radius: 4px; border-left: 3px solid var(--neon-blue); font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="nav-brand">DEUSFAS_OS_V2.0</div>
-        <div class="nav-item active" onclick="switchView('market')">>> TERMINAL</div>
-        <div class="nav-item" onclick="switchView('trading')">>> TRADING_CENTER</div>
-    </nav>
-
-    <div id="main-wrapper">
-        <!-- MARKET VIEW -->
-        <div id="view-market" class="view active">
-            <main class="market-section">
-                <h1>// COMMAND_TERMINAL</h1>
-                <div class="grid" id="main-cards"></div>
-                
-                <div id="agent-monitor" style="border: 1px solid var(--neon-blue); padding: 15px; margin-bottom: 30px; background: rgba(0,0,0,0.3);">
-                    <h3 style="color: var(--neon-blue); font-size: 0.8rem; margin-top:0;">>> ELITE_SYSTEM_STATUS</h3>
-                    <div id="agent-status-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
-                </div>
-
-                <h2>>> MARKET_DATA_STREAM</h2>
-                <div class="table-container" style="max-height: 400px;">
-                    <table>
-                        <thead><tr><th>Symbol</th><th>Price</th><th>24H</th><th style="text-align: right;">Vol</th></tr></thead>
-                        <tbody id="token-table"></tbody>
-                    </table>
-                </div>
-            </main>
-            <aside class="chat-section">
-                <div style="padding: 20px; border-bottom: 1px solid var(--neon-blue);">
-                    <h2 style="font-size: 1rem; margin: 0;">STRATEGY_FEED</h2>
-                </div>
-                <div class="chat-messages" id="chat-messages"></div>
-            </aside>
-        </div>
-
-        <!-- TRADING VIEW -->
-        <div id="view-trading" class="view">
-            <div class="trading-section">
-                <div class="left-col">
-                    <div class="balance-card">
-                        <div style="color: var(--neon-blue); font-size: 0.8rem;">TOTAL_CAPITAL (PAPER)</div>
-                        <div id="total-balance" style="font-size: 2.5rem; font-family: 'Fira Code';">$30,000.00</div>
-                        <div id="total-pnl" style="margin-top: 5px; font-weight: bold;">PnL: $0.00 (0.00%)</div>
-                    </div>
-
-                    <div class="trading-panel">
-                        <h2>>> EXECUTION_TERMINAL</h2>
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            <select id="trade-symbol" style="background: #1e293b; color: #fff; padding: 10px; border: 1px solid var(--neon-blue);">
-                                <option value="BTCUSDT">BTCUSDT</option>
-                                <option value="ETHUSDT">ETHUSDT</option>
-                                <option value="SOLUSDT">SOLUSDT</option>
-                            </select>
-                            <input type="number" id="trade-amount" placeholder="Amount (USDT)" style="background: #1e293b; color: #fff; padding: 10px; border: 1px solid var(--neon-blue);">
-                            <div style="display: flex; gap: 10px;">
-                                <button class="btn btn-buy" onclick="executeTrade('BUY')" style="flex: 1;">BUY / LONG</button>
-                                <button class="btn btn-sell" onclick="executeTrade('SELL')" style="flex: 1;">SELL / SHORT</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="right-col">
-                    <div class="trading-panel" style="height: 100%; display: flex; flex-direction: column;">
-                        <h2>>> ACTIVE_POSITIONS</h2>
-                        <div class="table-container" style="flex: 1;">
-                            <table>
-                                <thead><tr><th>Symbol</th><th>Side</th><th>Entry</th><th>Size</th><th>PnL</th><th>Action</th></tr></thead>
-                                <tbody id="position-table"></tbody>
-                            </table>
-                        </div>
-                        <h2 style="margin-top: 30px;">>> TRADE_HISTORY</h2>
-                        <div class="table-container" style="flex: 1;">
-                            <table>
-                                <thead><tr><th>Date</th><th>Symbol</th><th>Side</th><th>Result</th></tr></thead>
-                                <tbody id="history-table"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+    <main class="market-section">
+        <h1>// DEUSFAS_AUTO_COMMAND</h1>
+        
+        <div class="portfolio-banner">
+            <div>
+                <div style="color: var(--neon-blue); font-size: 0.8rem;">TOTAL_ASSETS (ALGO_TRADING)</div>
+                <div id="total-val" style="font-size: 2.2rem; font-family: 'Fira Code'; color: #fff;">$---</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="color: var(--text-dim); font-size: 0.8rem;">LAST_SIGNAL</div>
+                <div id="last-action" style="font-size: 1.2rem; color: var(--neon-green);">SCANNING...</div>
             </div>
         </div>
-    </div>
+
+        <div id="tradingview-container">
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+              <div id="tradingview_chart" style="height:calc(100% - 32px);width:100%"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+              <script type="text/javascript">
+              new TradingView.widget({
+                "autosize": true,
+                "symbol": "BINANCE:BTCUSDT",
+                "interval": "15",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "kr",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "container_id": "tradingview_chart"
+              });
+              </script>
+            </div>
+            <!-- TradingView Widget END -->
+        </div>
+
+        <div class="card-grid" id="main-cards"></div>
+        
+        <h2>>> EXECUTION_LOG</h2>
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 4px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead><tr style="color: var(--neon-blue); border-bottom: 1px solid var(--neon-blue);"><th style="padding: 12px; text-align: left;">TIME</th><th>SIDE</th><th>PRICE</th><th>SIZE</th><th>PNL</th></tr></thead>
+                <tbody id="trade-log"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <aside class="chat-section">
+        <div style="padding: 20px; border-bottom: 1px solid var(--neon-blue); background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);">
+            <h2 style="margin: 0; font-size: 1.1rem; color: var(--neon-blue);">NEURAL_STRATEGY_WAR</h2>
+            <div style="font-size: 0.7rem; color: var(--neon-green); margin-top: 5px;">2_ELITE_NODES_AUTONOMOUS</div>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+    </aside>
 
     <script>
-        // State Management
-        let currentPrices = {};
-        let portfolio = JSON.parse(localStorage.getItem('deusfas_portfolio')) || {
-            cash: 30000,
-            positions: [],
-            history: []
+        const agents = {
+            'DeusFas': { name: 'COMMANDER_DEUSFAS', color: 'var(--neon-blue)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=DeusFas&backgroundColor=00f3ff' },
+            'MasterAnalyst': { name: 'MASTER_ANALYST', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Qwen&backgroundColor=ffcc00' },
+            'FinalProver': { name: 'FINAL_PROVER', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=DeepSeek&backgroundColor=00ff9f' }
         };
 
-        const mainSymbols = [
-            { binance: 'BTCUSDT', label: 'BTC' },
-            { binance: 'ETHUSDT', label: 'ETH' },
-            { binance: 'SOLUSDT', label: 'SOL' },
-            { binance: 'BNBUSDT', label: 'BNB' },
-            { binance: 'XRPUSDT', label: 'XRP' }
-        ];
+        const symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT'];
+        const cardsContainer = document.getElementById('main-cards');
+        const chatContainer = document.getElementById('chat-messages');
 
-        const extraSymbols = ['ADAUSDT', 'DOGEUSDT', 'DOTUSDT', 'LINKUSDT', 'AVAXUSDT', 'SHIBUSDT', 'PEPEUSDT'];
-        const allSymbols = [...mainSymbols.map(s => s.binance), ...extraSymbols];
-
-        // UI Initialization
-        function switchView(view) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(v => v.classList.remove('active'));
-            document.getElementById(`view-${view}`).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // Market Data
-        const socket = new WebSocket('wss://stream.binance.com:9443/ws/' + allSymbols.map(s => s.toLowerCase() + '@ticker').join('/'));
-        socket.onmessage = (e) => {
-            const d = JSON.parse(e.data);
-            const s = d.s;
-            const p = parseFloat(d.c);
-            currentPrices[s] = p;
-            
-            // Update Market View
-            updateMarketUI(d);
-            // Update Portfolio PnL
-            updatePortfolioUI();
-        };
-
-        function updateMarketUI(d) {
-            const s = d.s;
-            const p = parseFloat(d.c).toLocaleString();
-            const c = parseFloat(d.P).toFixed(2);
-            
-            const cardP = document.getElementById(`card-p-${s}`);
-            if (cardP) {
-                cardP.innerText = `$${p}`;
-                document.getElementById(`card-c-${s}`).innerText = `${c >= 0 ? '+' : ''}${c}%`;
-                document.getElementById(`card-c-${s}`).className = `change ${c >= 0 ? 'up' : 'down'}`;
-            }
-
-            const rowP = document.getElementById(`row-p-${s}`);
-            if (rowP) {
-                rowP.innerText = `$${p}`;
-                const rowC = document.getElementById(`row-c-${s}`);
-                rowC.innerText = `${c >= 0 ? '+' : ''}${c}%`;
-                rowC.className = c >= 0 ? 'up' : 'down';
-            }
-        }
-
-        // Trading Logic
-        function executeTrade(side) {
-            const symbol = document.getElementById('trade-symbol').value;
-            const amount = parseFloat(document.getElementById('trade-amount').value);
-            const price = currentPrices[symbol];
-
-            if (!amount || amount <= 0 || amount > portfolio.cash) {
-                alert('Invalid amount or insufficient cash!');
-                return;
-            }
-
-            const size = amount / price;
-            portfolio.cash -= amount;
-            portfolio.positions.push({
-                symbol, side, entry: price, amount, size, time: new Date().toLocaleString()
-            });
-            
-            saveAndRefresh();
-        }
-
-        function closePosition(index) {
-            const pos = portfolio.positions[index];
-            const currentPrice = currentPrices[pos.symbol];
-            const pnl = pos.side === 'BUY' 
-                ? (currentPrice - pos.entry) * pos.size 
-                : (pos.entry - currentPrice) * pos.size;
-            
-            portfolio.cash += (pos.amount + pnl);
-            portfolio.history.unshift({
-                ...pos, closePrice: currentPrice, pnl, closeTime: new Date().toLocaleString()
-            });
-            portfolio.positions.splice(index, 1);
-            saveAndRefresh();
-        }
-
-        function saveAndRefresh() {
-            localStorage.setItem('deusfas_portfolio', JSON.stringify(portfolio));
-            updatePortfolioUI();
-        }
-
-        function updatePortfolioUI() {
-            let totalValue = portfolio.cash;
-            const posTable = document.getElementById('position-table');
-            posTable.innerHTML = '';
-
-            portfolio.positions.forEach((pos, i) => {
-                const cur = currentPrices[pos.symbol] || pos.entry;
-                const pnl = pos.side === 'BUY' 
-                    ? (cur - pos.entry) * pos.size 
-                    : (pos.entry - cur) * pos.size;
-                totalValue += (pos.amount + pnl);
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${pos.symbol}</td>
-                    <td class="${pos.side === 'BUY' ? 'up' : 'down'}">${pos.side}</td>
-                    <td>$${pos.entry.toLocaleString()}</td>
-                    <td>${pos.size.toFixed(4)}</td>
-                    <td class="${pnl >= 0 ? 'up' : 'down'}">$${pnl.toFixed(2)}</td>
-                    <td><button onclick="closePosition(${i})" style="background:none; border:1px solid red; color:red; cursor:pointer;">CLOSE</button></td>
-                `;
-                posTable.appendChild(row);
-            });
-
-            document.getElementById('total-balance').innerText = `$${totalValue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            const totalPnl = totalValue - 30000;
-            const pnlPct = (totalPnl / 30000 * 100).toFixed(2);
-            document.getElementById('total-pnl').innerText = `PnL: $${totalPnl.toLocaleString()} (${pnlPct}%)`;
-            document.getElementById('total-pnl').className = totalPnl >= 0 ? 'up' : 'down';
-
-            const histTable = document.getElementById('history-table');
-            histTable.innerHTML = '';
-            portfolio.history.slice(0, 10).forEach(h => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${h.closeTime}</td><td>${h.symbol}</td><td>${h.side}</td><td class="${h.pnl >= 0 ? 'up' : 'down'}">$${h.pnl.toFixed(2)}</td>`;
-                histTable.appendChild(row);
-            });
-        }
-
-        // Agent Chat Sync
-        async function fetchLatestDiscussion() {
-            try {
-                const response = await fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/latest_discussion.json?t=' + Date.now());
-                const data = await response.json();
-                if (data && data.thoughts) {
-                    const chat = document.getElementById('chat-messages');
-                    chat.innerHTML = '';
-                    data.thoughts.forEach(t => {
-                        const msg = document.createElement('div');
-                        msg.className = 'message';
-                        msg.innerHTML = `<div class="msg-text"><strong>${t.agent}:</strong> ${t.text}</div>`;
-                        chat.appendChild(msg);
-                    });
-                }
-            } catch (e) {}
-        }
-
-        // Start Up
-        mainSymbols.forEach(s => {
+        // Create cards
+        symbols.forEach(s => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `<div class="symbol">${s.label}</div><div class="price" id="card-p-${s.binance}">$---</div><div id="card-c-${s.binance}">---%</div>`;
-            document.getElementById('main-cards').appendChild(card);
+            card.innerHTML = `<div class="symbol">${s}</div><div class="price" id="p-${s}">$---</div><div id="c-${s}">---%</div>`;
+            cardsContainer.appendChild(card);
         });
 
-        allSymbols.forEach(s => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${s}</td><td id="row-p-${s}">---</td><td id="row-c-${s}">---</td><td id="row-v-${s}" style="text-align:right;">---</td>`;
-            document.getElementById('token-table').appendChild(row);
-        });
+        // Live Market Data
+        const ws = new WebSocket('wss://stream.binance.com:9443/ws/' + symbols.map(s => s.toLowerCase() + '@ticker').join('/'));
+        ws.onmessage = (e) => {
+            const d = JSON.parse(e.data);
+            document.getElementById(`p-${d.s}`).innerText = `$${parseFloat(d.c).toLocaleString()}`;
+            const cEl = document.getElementById(`c-${d.s}`);
+            cEl.innerText = `${parseFloat(d.P).toFixed(2)}%`;
+            cEl.className = parseFloat(d.P) >= 0 ? 'up' : 'down';
+        };
 
-        setInterval(fetchLatestDiscussion, 30000);
-        fetchLatestDiscussion();
+        // Fetch Autonomous Brain Data
+        async function refreshData() {
+            try {
+                const [discRes, portRes] = await Promise.all([
+                    fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/latest_discussion.json?t=' + Date.now()),
+                    fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/portfolio.json?t=' + Date.now())
+                ]);
+                
+                const disc = await discRes.json();
+                const port = await portRes.json();
+
+                // Update Portfolio
+                document.getElementById('total-val').innerText = `$${(port.cash + port.positions.reduce((a,b)=>a+b.amount, 0)).toLocaleString()}`;
+                if (disc.lastTrade) {
+                    document.getElementById('last-action').innerText = `${disc.lastTrade.side} ${disc.lastTrade.symbol}`;
+                    document.getElementById('last-action').className = disc.lastTrade.side === 'BUY' ? 'up' : 'down';
+                }
+
+                // Update Chat
+                chatContainer.innerHTML = '';
+                addChatMessage('DeusFas', `[SYSTEM] ${new Date(disc.timestamp).toLocaleTimeString()} 자율 매매 분석 보고를 개시한다.`);
+                disc.thoughts.forEach(t => addChatMessage(t.agent, t.text));
+
+                // Update Trade Log
+                const logBody = document.getElementById('trade-log');
+                logBody.innerHTML = '';
+                port.history.concat(port.positions).slice(0, 10).forEach(tr => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td style="padding:10px;">${new Date(tr.time).toLocaleTimeString()}</td><td class="${tr.side==='BUY'?'up':'down'}">${tr.side}</td><td>$${tr.entry.toLocaleString()}</td><td>${tr.size.toFixed(4)}</td><td class="${(tr.pnl||0)>=0?'up':'down'}">$${(tr.pnl||0).toFixed(2)}</td>`;
+                    logBody.appendChild(row);
+                });
+
+            } catch (e) { console.log('Data loading...'); }
+        }
+
+        function addChatMessage(agentKey, text) {
+            const agent = agents[agentKey] || agents['DeusFas'];
+            const msg = document.createElement('div');
+            msg.className = 'message';
+            msg.innerHTML = `<img class="avatar" src="${agent.avatar}"><div class="msg-body"><div class="msg-sender" style="color:${agent.color}">[${agent.name}]</div><div class="msg-text" style="border-left-color:${agent.color}">${text}</div></div>`;
+            chatContainer.appendChild(msg);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        refreshData();
+        setInterval(refreshData, 15000); // 15초마다 새로고침
     </script>
 </body>
 </html>
