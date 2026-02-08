@@ -5,127 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DEUSFAS - AUTO TRADING COMMAND CENTER</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
-        :root {
-            --neon-blue: #00f3ff; --neon-pink: #ff00ff; --neon-green: #00ff9f; --neon-gold: #ffcc00;
-            --bg-black: #050507; --text-dim: #94a3b8;
-        }
-        body { background: var(--bg-black); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        .market-section { flex: 1; padding: 25px; overflow-y: auto; border-right: 1px solid rgba(0, 243, 255, 0.2); }
-        .chat-section { width: 450px; background: rgba(10, 10, 15, 0.95); display: flex; flex-direction: column; border-left: 2px solid var(--neon-blue); }
-
-        h1, h2 { font-family: 'Orbitron'; color: var(--neon-blue); margin-bottom: 20px; letter-spacing: 2px; }
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 243, 255, 0.2); padding: 15px; border-radius: 4px; border-left: 4px solid var(--neon-blue); }
-        .price { font-size: 1.5rem; font-family: 'Fira Code'; }
-        .up { color: var(--neon-green); } .down { color: var(--neon-pink); }
-
-        /* Chart Widget */
-        #tradingview-container { height: 400px; margin-bottom: 30px; border: 1px solid var(--neon-blue); border-radius: 4px; overflow: hidden; }
-
-        /* Portfolio */
-        .portfolio-banner { background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent); border: 1px solid var(--neon-blue); padding: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* Chat */
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .message { display: flex; gap: 12px; }
-        .avatar { width: 45px; height: 45px; border: 2px solid var(--neon-blue); border-radius: 4px; box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
-        .msg-body { flex: 1; }
-        .msg-sender { font-family: 'Orbitron'; font-size: 0.75rem; margin-bottom: 5px; }
-        .msg-text { background: rgba(30, 41, 59, 0.3); padding: 12px; border-radius: 4px; border-left: 3px solid var(--neon-blue); font-size: 0.9rem; }
+        /* ... existing styles ... */
+        .typing { font-style: italic; color: var(--text-dim); font-size: 0.8rem; margin-top: 5px; display: none; }
+        .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: var(--neon-blue); color: var(--neon-blue); animation: dot-flashing 1s infinite linear alternate; animation-delay: .5s; margin: 0 10px; display: inline-block; }
+        @keyframes dot-flashing { 0% { background-color: var(--neon-blue); } 50%, 100% { background-color: rgba(0, 243, 255, 0.2); } }
     </style>
 </head>
 <body>
+    <!-- ... header and chart ... -->
+    <div id="tradingview-container">...</div>
 
-    <main class="market-section">
-        <h1>// DEUSFAS_AUTO_COMMAND</h1>
-        
-        <div class="portfolio-banner">
-            <div>
-                <div style="color: var(--neon-blue); font-size: 0.8rem;">TOTAL_ASSETS (ALGO_TRADING)</div>
-                <div id="total-val" style="font-size: 2.2rem; font-family: 'Fira Code'; color: #fff;">$---</div>
-            </div>
-            <div style="text-align: right;">
-                <div style="color: var(--text-dim); font-size: 0.8rem;">LAST_SIGNAL</div>
-                <div id="last-action" style="font-size: 1.2rem; color: var(--neon-green);">SCANNING...</div>
-            </div>
-        </div>
+    <h2 style="color: var(--neon-blue); font-size: 0.9rem; letter-spacing: 1px;">>> GLOBAL_LIQUIDITY_INDEX</h2>
+    <div class="card-grid" id="main-cards" style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));"></div>
 
-        <div id="tradingview-container">
-            <!-- TradingView Widget BEGIN -->
-            <div class="tradingview-widget-container" style="height:100%;width:100%">
-              <div id="tradingview_chart" style="height:calc(100% - 32px);width:100%"></div>
-              <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-              <script type="text/javascript">
-              new TradingView.widget({
-                "autosize": true,
-                "symbol": "BINANCE:BTCUSDT",
-                "interval": "15",
-                "timezone": "Etc/UTC",
-                "theme": "dark",
-                "style": "1",
-                "locale": "kr",
-                "toolbar_bg": "#f1f3f6",
-                "enable_publishing": false,
-                "hide_side_toolbar": false,
-                "allow_symbol_change": true,
-                "container_id": "tradingview_chart"
-              });
-              </script>
-            </div>
-            <!-- TradingView Widget END -->
-        </div>
-
-        <div class="card-grid" id="main-cards"></div>
-        
-        <h2>>> EXECUTION_LOG</h2>
-        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 4px;">
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead><tr style="color: var(--neon-blue); border-bottom: 1px solid var(--neon-blue);"><th style="padding: 12px; text-align: left;">TIME</th><th>SIDE</th><th>PRICE</th><th>SIZE</th><th>PNL</th></tr></thead>
-                <tbody id="trade-log"></tbody>
-            </table>
-        </div>
-    </main>
+    <!-- ... existing execution log ... -->
 
     <aside class="chat-section">
         <div style="padding: 20px; border-bottom: 1px solid var(--neon-blue); background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);">
             <h2 style="margin: 0; font-size: 1.1rem; color: var(--neon-blue);">NEURAL_STRATEGY_WAR</h2>
-            <div style="font-size: 0.7rem; color: var(--neon-green); margin-top: 5px;">2_ELITE_NODES_AUTONOMOUS</div>
+            <div id="typing-indicator" style="font-size: 0.7rem; color: var(--neon-gold); margin-top: 5px; display: none;">
+                <span class="dot-flashing"></span> <span id="typing-agent">AGENT</span> IS ANALYZING...
+            </div>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
     </aside>
 
     <script>
         const agents = {
-            'DeusFas': { name: 'COMMANDER_DEUSFAS', color: 'var(--neon-blue)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=DeusFas&backgroundColor=00f3ff' },
-            'MasterAnalyst': { name: 'MASTER_ANALYST', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Qwen&backgroundColor=ffcc00' },
-            'FinalProver': { name: 'FINAL_PROVER', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=DeepSeek&backgroundColor=00ff9f' }
+            'DeusFas': { name: 'COMMANDER_DEUSFAS', color: 'var(--neon-blue)', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix' },
+            'MasterAnalyst': { name: 'MASTER_ANALYST (Qwen)', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Midnight' },
+            'FinalProver': { name: 'FINAL_PROVER (DeepSeek)', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=Shadow' }
         };
 
-        const symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT'];
-        const cardsContainer = document.getElementById('main-cards');
-        const chatContainer = document.getElementById('chat-messages');
+        const symbols = [
+            'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT', 
+            'DOTUSDT', 'LINKUSDT', 'AVAXUSDT', 'SHIBUSDT', 'MATICUSDT', 'TRXUSDT', 'LTCUSDT',
+            'UNIUSDT', 'NEARUSDT', 'APTUSDT', 'ARBUSDT', 'OPUSDT', 'SUIUSDT'
+        ];
 
-        // Create cards
-        symbols.forEach(s => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `<div class="symbol">${s}</div><div class="price" id="p-${s}">$---</div><div id="c-${s}">---%</div>`;
-            cardsContainer.appendChild(card);
-        });
+        const typingIndicator = document.getElementById('typing-indicator');
+        const typingAgent = document.getElementById('typing-agent');
 
-        // Live Market Data
-        const ws = new WebSocket('wss://stream.binance.com:9443/ws/' + symbols.map(s => s.toLowerCase() + '@ticker').join('/'));
-        ws.onmessage = (e) => {
-            const d = JSON.parse(e.data);
-            document.getElementById(`p-${d.s}`).innerText = `$${parseFloat(d.c).toLocaleString()}`;
-            const cEl = document.getElementById(`c-${d.s}`);
-            cEl.innerText = `${parseFloat(d.P).toFixed(2)}%`;
-            cEl.className = parseFloat(d.P) >= 0 ? 'up' : 'down';
-        };
+        function showTyping(agentName) {
+            typingAgent.innerText = agentName;
+            typingIndicator.style.display = 'block';
+            setTimeout(() => { typingIndicator.style.display = 'none'; }, 3000);
+        }
 
-        // Fetch Autonomous Brain Data
         async function refreshData() {
             try {
                 const [discRes, portRes] = await Promise.all([
@@ -136,41 +62,24 @@
                 const disc = await discRes.json();
                 const port = await portRes.json();
 
-                // Update Portfolio
-                document.getElementById('total-val').innerText = `$${(port.cash + port.positions.reduce((a,b)=>a+b.amount, 0)).toLocaleString()}`;
-                if (disc.lastTrade) {
-                    document.getElementById('last-action').innerText = `${disc.lastTrade.side} ${disc.lastTrade.symbol}`;
-                    document.getElementById('last-action').className = disc.lastTrade.side === 'BUY' ? 'up' : 'down';
-                }
+                // ... portfolio and log updates ...
 
-                // Update Chat
+                // Simulate Typing before adding messages
                 chatContainer.innerHTML = '';
-                addChatMessage('DeusFas', `[SYSTEM] ${new Date(disc.timestamp).toLocaleTimeString()} 자율 매매 분석 보고를 개시한다.`);
-                disc.thoughts.forEach(t => addChatMessage(t.agent, t.text));
-
-                // Update Trade Log
-                const logBody = document.getElementById('trade-log');
-                logBody.innerHTML = '';
-                port.history.concat(port.positions).slice(0, 10).forEach(tr => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td style="padding:10px;">${new Date(tr.time).toLocaleTimeString()}</td><td class="${tr.side==='BUY'?'up':'down'}">${tr.side}</td><td>$${tr.entry.toLocaleString()}</td><td>${tr.size.toFixed(4)}</td><td class="${(tr.pnl||0)>=0?'up':'down'}">$${(tr.pnl||0).toFixed(2)}</td>`;
-                    logBody.appendChild(row);
+                addChatMessage('DeusFas', `[SYSTEM] ${new Date(disc.timestamp).toLocaleTimeString()} 자율 매매 분석 보고.`);
+                
+                disc.thoughts.forEach((t, i) => {
+                    setTimeout(() => {
+                        showTyping(t.agent);
+                        setTimeout(() => {
+                            addChatMessage(t.agent, t.text);
+                        }, 2000);
+                    }, i * 4000);
                 });
 
-            } catch (e) { console.log('Data loading...'); }
+            } catch (e) {}
         }
-
-        function addChatMessage(agentKey, text) {
-            const agent = agents[agentKey] || agents['DeusFas'];
-            const msg = document.createElement('div');
-            msg.className = 'message';
-            msg.innerHTML = `<img class="avatar" src="${agent.avatar}"><div class="msg-body"><div class="msg-sender" style="color:${agent.color}">[${agent.name}]</div><div class="msg-text" style="border-left-color:${agent.color}">${text}</div></div>`;
-            chatContainer.appendChild(msg);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        refreshData();
-        setInterval(refreshData, 15000); // 15초마다 새로고침
+        // ... WS and init code ...
     </script>
 </body>
 </html>
