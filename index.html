@@ -27,334 +27,326 @@
             font-family: 'Rajdhani', sans-serif;
             margin: 0;
             display: flex;
+            flex-direction: column;
             height: 100vh;
             overflow: hidden;
         }
 
-        /* Scanline Effect */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 100;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        .market-section {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            border-right: 1px solid rgba(0, 243, 255, 0.2);
-            position: relative;
-        }
-
-        .chat-section {
-            width: 500px;
-            background: rgba(10, 10, 15, 0.95);
+        /* Nav Header */
+        nav {
+            height: 60px;
+            background: rgba(10, 10, 15, 0.9);
+            border-bottom: 2px solid var(--neon-blue);
             display: flex;
-            flex-direction: column;
-            border-left: 2px solid var(--neon-blue);
-            box-shadow: -10px 0 30px rgba(0, 243, 255, 0.1);
-            backdrop-filter: blur(10px);
+            align-items: center;
+            padding: 0 30px;
+            gap: 40px;
+            z-index: 1000;
         }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            color: var(--neon-blue);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: var(--border-glow);
-            margin-bottom: 30px;
-        }
+        .nav-brand { font-family: 'Orbitron'; color: var(--neon-blue); font-weight: 700; font-size: 1.2rem; }
+        .nav-item { cursor: pointer; color: var(--text-dim); text-transform: uppercase; font-weight: 600; letter-spacing: 1px; transition: 0.3s; }
+        .nav-item:hover, .nav-item.active { color: var(--neon-blue); text-shadow: var(--border-glow); }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
+        /* Main Containers */
+        #main-wrapper { display: flex; flex: 1; overflow: hidden; }
+        .view { display: none; width: 100%; height: 100%; flex: 1; }
+        .view.active { display: flex; }
 
-        .card {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            padding: 20px;
-            border-radius: 4px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        /* Market View */
+        .market-section { flex: 1; padding: 30px; overflow-y: auto; border-right: 1px solid rgba(0, 243, 255, 0.2); }
+        .chat-section { width: 450px; background: rgba(10, 10, 15, 0.95); display: flex; flex-direction: column; border-left: 2px solid var(--neon-blue); }
 
-        .card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--neon-blue);
-            box-shadow: var(--border-glow);
-        }
+        /* Trading View */
+        .trading-section { flex: 1; padding: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; overflow-y: auto; }
+        .trading-panel { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 243, 255, 0.2); padding: 25px; border-radius: 4px; }
 
-        .card:hover {
-            background: rgba(0, 243, 255, 0.1);
-            border-color: var(--neon-blue);
-            transform: scale(1.02);
-        }
+        /* Common Elements */
+        h1, h2 { font-family: 'Orbitron'; color: var(--neon-blue); margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 2px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 243, 255, 0.2); padding: 15px; border-radius: 4px; border-left: 4px solid var(--neon-blue); }
+        .symbol { font-size: 0.9rem; color: var(--neon-blue); }
+        .price { font-size: 1.5rem; margin: 5px 0; font-family: 'Fira Code'; }
+        .up { color: var(--neon-green); } .down { color: var(--neon-pink); }
 
-        .symbol { font-size: 1rem; color: var(--neon-blue); font-weight: 700; letter-spacing: 1px; }
-        .price { font-size: 1.8rem; margin: 10px 0; font-family: 'Fira Code', monospace; color: #fff; }
-        .change { font-weight: 700; font-size: 0.9rem; }
-        .up { color: var(--neon-green); text-shadow: 0 0 5px rgba(0, 255, 159, 0.5); }
-        .down { color: var(--neon-pink); text-shadow: 0 0 5px rgba(255, 0, 255, 0.5); }
+        .table-container { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 4px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { background: rgba(0, 243, 255, 0.1); padding: 12px; text-align: left; color: var(--neon-blue); }
+        td { padding: 12px; border-bottom: 1px solid rgba(0, 243, 255, 0.05); }
 
-        .table-container {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(0, 243, 255, 0.1);
-            border-radius: 4px;
-        }
+        /* Trading Components */
+        .balance-card { background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), transparent); border: 1px solid var(--neon-blue); padding: 20px; margin-bottom: 20px; }
+        .btn { padding: 10px 20px; border: none; cursor: pointer; font-family: 'Orbitron'; text-transform: uppercase; font-weight: bold; border-radius: 2px; }
+        .btn-buy { background: var(--neon-green); color: #000; }
+        .btn-sell { background: var(--neon-pink); color: #000; }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { 
-            background: rgba(0, 243, 255, 0.1); 
-            padding: 15px; 
-            text-align: left; 
-            color: var(--neon-blue); 
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-        td { padding: 15px; border-bottom: 1px solid rgba(0, 243, 255, 0.05); }
-
-        /* Cyber Chat */
-        .chat-header {
-            padding: 25px;
-            border-bottom: 1px solid var(--neon-blue);
-            background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .message {
-            display: flex;
-            gap: 15px;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 4px;
-            border: 2px solid var(--neon-blue);
-            box-shadow: var(--border-glow);
-        }
-
-        .msg-text {
-            background: rgba(30, 41, 59, 0.3);
-            padding: 15px;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-        }
-
-        .msg-sender {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--neon-green);
-            margin-right: 8px;
-            box-shadow: 0 0 5px var(--neon-green);
-        }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .message { display: flex; gap: 12px; }
+        .avatar { width: 40px; height: 40px; border: 1px solid var(--neon-blue); border-radius: 4px; }
+        .msg-text { background: rgba(30, 41, 59, 0.3); padding: 10px; border-radius: 4px; border-left: 2px solid var(--neon-blue); font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-    <main class="market-section">
-        <h1>// DEUSFAS_CYBER_TERMINAL</h1>
-        <div class="grid" id="main-cards"></div>
+    <nav>
+        <div class="nav-brand">DEUSFAS_OS_V2.0</div>
+        <div class="nav-item active" onclick="switchView('market')">>> TERMINAL</div>
+        <div class="nav-item" onclick="switchView('trading')">>> TRADING_CENTER</div>
+    </nav>
 
-        <div id="agent-monitor" style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--neon-blue); padding: 20px; border-radius: 4px; margin-bottom: 40px; box-shadow: var(--border-glow);">
-            <h3 style="margin-top: 0; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 0.9rem;">>> ELITE_DUAL_AGENT_MONITOR</h3>
-            <div id="agent-status-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                <!-- 에이전트 상태가 여기에 동적으로 표시됩니다 -->
+    <div id="main-wrapper">
+        <!-- MARKET VIEW -->
+        <div id="view-market" class="view active">
+            <main class="market-section">
+                <h1>// COMMAND_TERMINAL</h1>
+                <div class="grid" id="main-cards"></div>
+                
+                <div id="agent-monitor" style="border: 1px solid var(--neon-blue); padding: 15px; margin-bottom: 30px; background: rgba(0,0,0,0.3);">
+                    <h3 style="color: var(--neon-blue); font-size: 0.8rem; margin-top:0;">>> ELITE_SYSTEM_STATUS</h3>
+                    <div id="agent-status-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
+                </div>
+
+                <h2>>> MARKET_DATA_STREAM</h2>
+                <div class="table-container" style="max-height: 400px;">
+                    <table>
+                        <thead><tr><th>Symbol</th><th>Price</th><th>24H</th><th style="text-align: right;">Vol</th></tr></thead>
+                        <tbody id="token-table"></tbody>
+                    </table>
+                </div>
+            </main>
+            <aside class="chat-section">
+                <div style="padding: 20px; border-bottom: 1px solid var(--neon-blue);">
+                    <h2 style="font-size: 1rem; margin: 0;">STRATEGY_FEED</h2>
+                </div>
+                <div class="chat-messages" id="chat-messages"></div>
+            </aside>
+        </div>
+
+        <!-- TRADING VIEW -->
+        <div id="view-trading" class="view">
+            <div class="trading-section">
+                <div class="left-col">
+                    <div class="balance-card">
+                        <div style="color: var(--neon-blue); font-size: 0.8rem;">TOTAL_CAPITAL (PAPER)</div>
+                        <div id="total-balance" style="font-size: 2.5rem; font-family: 'Fira Code';">$30,000.00</div>
+                        <div id="total-pnl" style="margin-top: 5px; font-weight: bold;">PnL: $0.00 (0.00%)</div>
+                    </div>
+
+                    <div class="trading-panel">
+                        <h2>>> EXECUTION_TERMINAL</h2>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <select id="trade-symbol" style="background: #1e293b; color: #fff; padding: 10px; border: 1px solid var(--neon-blue);">
+                                <option value="BTCUSDT">BTCUSDT</option>
+                                <option value="ETHUSDT">ETHUSDT</option>
+                                <option value="SOLUSDT">SOLUSDT</option>
+                            </select>
+                            <input type="number" id="trade-amount" placeholder="Amount (USDT)" style="background: #1e293b; color: #fff; padding: 10px; border: 1px solid var(--neon-blue);">
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-buy" onclick="executeTrade('BUY')" style="flex: 1;">BUY / LONG</button>
+                                <button class="btn btn-sell" onclick="executeTrade('SELL')" style="flex: 1;">SELL / SHORT</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-col">
+                    <div class="trading-panel" style="height: 100%; display: flex; flex-direction: column;">
+                        <h2>>> ACTIVE_POSITIONS</h2>
+                        <div class="table-container" style="flex: 1;">
+                            <table>
+                                <thead><tr><th>Symbol</th><th>Side</th><th>Entry</th><th>Size</th><th>PnL</th><th>Action</th></tr></thead>
+                                <tbody id="position-table"></tbody>
+                            </table>
+                        </div>
+                        <h2 style="margin-top: 30px;">>> TRADE_HISTORY</h2>
+                        <div class="table-container" style="flex: 1;">
+                            <table>
+                                <thead><tr><th>Date</th><th>Symbol</th><th>Side</th><th>Result</th></tr></thead>
+                                <tbody id="history-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <h2 style="color: var(--neon-blue); letter-spacing: 2px;">>> MARKET_DATABASE_ACCESS</h2>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Access_Key</th>
-                        <th>Valuation</th>
-                        <th>24H_Delta</th>
-                        <th style="text-align: right;">Liquidity_24H</th>
-                    </tr>
-                </thead>
-                <tbody id="token-table"></tbody>
-            </table>
-        </div>
-    </main>
-
-    <aside class="chat-section">
-        <div class="chat-header">
-            <h2 style="margin: 0; font-family: 'Orbitron'; font-size: 1.2rem; color: var(--neon-blue);">NEURAL_STRATEGY_STREAM</h2>
-            <div style="font-size: 0.8rem; color: var(--neon-green); margin-top: 5px;">
-                <span class="status-dot"></span>ELITE_DUAL_NODE_ACTIVE
-            </div>
-        </div>
-        <div class="chat-messages" id="chat-messages"></div>
-    </aside>
+    </div>
 
     <script>
-        const mainSymbols = [
-            { binance: 'BTCUSDT', label: 'BTC_PRIME' },
-            { binance: 'ETHUSDT', label: 'ETH_CORE' },
-            { binance: 'SOLUSDT', label: 'SOL_FLOW' },
-            { binance: 'BNBUSDT', label: 'BNB_CHAIN' },
-            { binance: 'XRPUSDT', label: 'XRP_LEDGER' }
-        ];
-
-        const extraSymbols = [
-            'ADAUSDT', 'DOGEUSDT', 'DOTUSDT', 'LINKUSDT', 'AVAXUSDT', 
-            'SHIBUSDT', 'TRXUSDT', 'LTCUSDT', 'UNIUSDT', 'NEARUSDT', 
-            'APTUSDT', 'ARBUSDT', 'OPUSDT', 'SUIUSDT', 'PEPEUSDT'
-        ];
-
-        const allSymbols = [...mainSymbols.map(s => s.binance), ...extraSymbols];
-        const cardsContainer = document.getElementById('main-cards');
-        const tableBody = document.getElementById('token-table');
-        const chatContainer = document.getElementById('chat-messages');
-        const agentStatusGrid = document.getElementById('agent-status-grid');
-
-        const state = { cards: {}, rows: {}, agentStats: {} };
-
-        // Agent Metadata (Elite Dual System)
-        const agentMetadata = [
-            { id: 'MasterAnalyst', label: 'MASTER_ANALYST (QWEN)', color: 'var(--neon-gold)' },
-            { id: 'FinalProver', label: 'FINAL_PROVER (DEEPSEEK)', color: 'var(--neon-green)' }
-        ];
-
-        agentMetadata.forEach(meta => {
-            const el = document.createElement('div');
-            el.style.borderLeft = `2px solid ${meta.color}`;
-            el.style.padding = '10px';
-            el.style.background = 'rgba(255,255,255,0.03)';
-            el.innerHTML = `
-                <div style="font-size: 0.7rem; color: ${meta.color}; font-weight: bold;">${meta.label}</div>
-                <div id="status-${meta.id}" style="font-size: 0.9rem; margin: 5px 0;">READY</div>
-                <div style="width: 100%; height: 4px; background: #334155; border-radius: 2px; overflow: hidden;">
-                    <div id="load-${meta.id}" style="width: 0%; height: 100%; background: ${meta.color}; transition: width 0.3s;"></div>
-                </div>
-            `;
-            agentStatusGrid.appendChild(el);
-            state.agentStats[meta.id] = {
-                statusEl: document.getElementById(`status-${meta.id}`),
-                loadEl: document.getElementById(`load-${meta.id}`)
-            };
-        });
-
-        // Initialize UI
-        mainSymbols.forEach(s => {
-            const card = document.createElement('div');
-            card.className = card;
-            card.innerHTML = `<div class="symbol">${s.label}</div><div class="price" id="card-p-${s.binance}">$---</div><div class="change" id="card-c-${s.binance}">---%</div>`;
-            cardsContainer.appendChild(card);
-            state.cards[s.binance] = { price: document.getElementById(`card-p-${s.binance}`), change: document.getElementById(`card-c-${s.binance}`), last: 0 };
-        });
-
-        extraSymbols.forEach(s => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${s.replace('USDT','')}</td><td id="row-p-${s}" style="font-family: 'Fira Code';">$---</td><td id="row-c-${s}">---%</td><td id="row-v-${s}" style="text-align: right; color: #64748b;">---</td>`;
-            tableBody.appendChild(row);
-            state.rows[s] = { price: document.getElementById(`row-p-${s}`), change: document.getElementById(`row-c-${s}`), vol: document.getElementById(`row-v-${s}`) };
-        });
-
-        // Chat Data
-        const agents = {
-            'DeusFas': { name: 'COMMANDER_DEUSFAS', color: 'var(--neon-blue)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=DeusFas&backgroundColor=00f3ff' },
-            'MasterAnalyst': { name: 'MASTER_ANALYST (Qwen)', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Qwen&backgroundColor=ffcc00' },
-            'FinalProver': { name: 'FINAL_PROVER (DeepSeek)', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=DeepSeek&backgroundColor=00ff9f' }
+        // State Management
+        let currentPrices = {};
+        let portfolio = JSON.parse(localStorage.getItem('deusfas_portfolio')) || {
+            cash: 30000,
+            positions: [],
+            history: []
         };
 
-        function addChatMessage(agentKey, text) {
-            const agent = agents[agentKey] || agents['DeusFas'];
-            const msg = document.createElement('div');
-            msg.className = 'message';
-            msg.innerHTML = `
-                <img class="avatar" src="${agent.avatar}">
-                <div class="msg-body">
-                    <div class="msg-sender" style="color: ${agent.color}">[${agent.name}]</div>
-                    <div class="msg-text" style="border-left: 2px solid ${agent.color}">${text}</div>
-                </div>`;
-            chatContainer.appendChild(msg);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+        const mainSymbols = [
+            { binance: 'BTCUSDT', label: 'BTC' },
+            { binance: 'ETHUSDT', label: 'ETH' },
+            { binance: 'SOLUSDT', label: 'SOL' },
+            { binance: 'BNBUSDT', label: 'BNB' },
+            { binance: 'XRPUSDT', label: 'XRP' }
+        ];
+
+        const extraSymbols = ['ADAUSDT', 'DOGEUSDT', 'DOTUSDT', 'LINKUSDT', 'AVAXUSDT', 'SHIBUSDT', 'PEPEUSDT'];
+        const allSymbols = [...mainSymbols.map(s => s.binance), ...extraSymbols];
+
+        // UI Initialization
+        function switchView(view) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${view}`).classList.add('active');
+            event.target.classList.add('active');
         }
 
-        // WebSocket
+        // Market Data
         const socket = new WebSocket('wss://stream.binance.com:9443/ws/' + allSymbols.map(s => s.toLowerCase() + '@ticker').join('/'));
         socket.onmessage = (e) => {
             const d = JSON.parse(e.data);
             const s = d.s;
-            const p = parseFloat(d.c).toLocaleString(undefined, { minimumFractionDigits: 2 });
-            const c = parseFloat(d.P).toFixed(2);
-            if (state.cards[s]) {
-                state.cards[s].price.innerText = `$${p}`;
-                state.cards[s].change.innerText = `${c >= 0 ? '+' : ''}${c}%`;
-                state.cards[s].change.className = `change ${c >= 0 ? 'up' : 'down'}`;
-            }
-            if (state.rows[s]) {
-                state.rows[s].price.innerText = `$${p}`;
-                state.rows[s].change.innerText = `${c >= 0 ? '+' : ''}${c}%`;
-                state.rows[s].change.style.color = c >= 0 ? 'var(--neon-green)' : 'var(--neon-pink)';
-                state.rows[s].vol.innerText = `$${(parseFloat(d.q)/1000000).toFixed(1)}M`;
-            }
+            const p = parseFloat(d.c);
+            currentPrices[s] = p;
+            
+            // Update Market View
+            updateMarketUI(d);
+            // Update Portfolio PnL
+            updatePortfolioUI();
         };
 
-        // Autonomous Feed (Real-time update)
+        function updateMarketUI(d) {
+            const s = d.s;
+            const p = parseFloat(d.c).toLocaleString();
+            const c = parseFloat(d.P).toFixed(2);
+            
+            const cardP = document.getElementById(`card-p-${s}`);
+            if (cardP) {
+                cardP.innerText = `$${p}`;
+                document.getElementById(`card-c-${s}`).innerText = `${c >= 0 ? '+' : ''}${c}%`;
+                document.getElementById(`card-c-${s}`).className = `change ${c >= 0 ? 'up' : 'down'}`;
+            }
+
+            const rowP = document.getElementById(`row-p-${s}`);
+            if (rowP) {
+                rowP.innerText = `$${p}`;
+                const rowC = document.getElementById(`row-c-${s}`);
+                rowC.innerText = `${c >= 0 ? '+' : ''}${c}%`;
+                rowC.className = c >= 0 ? 'up' : 'down';
+            }
+        }
+
+        // Trading Logic
+        function executeTrade(side) {
+            const symbol = document.getElementById('trade-symbol').value;
+            const amount = parseFloat(document.getElementById('trade-amount').value);
+            const price = currentPrices[symbol];
+
+            if (!amount || amount <= 0 || amount > portfolio.cash) {
+                alert('Invalid amount or insufficient cash!');
+                return;
+            }
+
+            const size = amount / price;
+            portfolio.cash -= amount;
+            portfolio.positions.push({
+                symbol, side, entry: price, amount, size, time: new Date().toLocaleString()
+            });
+            
+            saveAndRefresh();
+        }
+
+        function closePosition(index) {
+            const pos = portfolio.positions[index];
+            const currentPrice = currentPrices[pos.symbol];
+            const pnl = pos.side === 'BUY' 
+                ? (currentPrice - pos.entry) * pos.size 
+                : (pos.entry - currentPrice) * pos.size;
+            
+            portfolio.cash += (pos.amount + pnl);
+            portfolio.history.unshift({
+                ...pos, closePrice: currentPrice, pnl, closeTime: new Date().toLocaleString()
+            });
+            portfolio.positions.splice(index, 1);
+            saveAndRefresh();
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('deusfas_portfolio', JSON.stringify(portfolio));
+            updatePortfolioUI();
+        }
+
+        function updatePortfolioUI() {
+            let totalValue = portfolio.cash;
+            const posTable = document.getElementById('position-table');
+            posTable.innerHTML = '';
+
+            portfolio.positions.forEach((pos, i) => {
+                const cur = currentPrices[pos.symbol] || pos.entry;
+                const pnl = pos.side === 'BUY' 
+                    ? (cur - pos.entry) * pos.size 
+                    : (pos.entry - cur) * pos.size;
+                totalValue += (pos.amount + pnl);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${pos.symbol}</td>
+                    <td class="${pos.side === 'BUY' ? 'up' : 'down'}">${pos.side}</td>
+                    <td>$${pos.entry.toLocaleString()}</td>
+                    <td>${pos.size.toFixed(4)}</td>
+                    <td class="${pnl >= 0 ? 'up' : 'down'}">$${pnl.toFixed(2)}</td>
+                    <td><button onclick="closePosition(${i})" style="background:none; border:1px solid red; color:red; cursor:pointer;">CLOSE</button></td>
+                `;
+                posTable.appendChild(row);
+            });
+
+            document.getElementById('total-balance').innerText = `$${totalValue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            const totalPnl = totalValue - 30000;
+            const pnlPct = (totalPnl / 30000 * 100).toFixed(2);
+            document.getElementById('total-pnl').innerText = `PnL: $${totalPnl.toLocaleString()} (${pnlPct}%)`;
+            document.getElementById('total-pnl').className = totalPnl >= 0 ? 'up' : 'down';
+
+            const histTable = document.getElementById('history-table');
+            histTable.innerHTML = '';
+            portfolio.history.slice(0, 10).forEach(h => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${h.closeTime}</td><td>${h.symbol}</td><td>${h.side}</td><td class="${h.pnl >= 0 ? 'up' : 'down'}">$${h.pnl.toFixed(2)}</td>`;
+                histTable.appendChild(row);
+            });
+        }
+
+        // Agent Chat Sync
         async function fetchLatestDiscussion() {
             try {
                 const response = await fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/latest_discussion.json?t=' + Date.now());
                 const data = await response.json();
                 if (data && data.thoughts) {
-                    chatContainer.innerHTML = '';
-                    addChatMessage('DeusFas', `[CENTRAL_COMMAND] ${new Date(data.timestamp).toLocaleTimeString()} 정예 2인 체제 전략 보고 수신.`);
+                    const chat = document.getElementById('chat-messages');
+                    chat.innerHTML = '';
                     data.thoughts.forEach(t => {
-                        addChatMessage(t.agent, t.text);
-                        if (state.agentStats[t.agent]) {
-                            state.agentStats[t.agent].statusEl.innerText = t.status || 'ACTIVE';
-                            state.agentStats[t.agent].loadEl.style.width = (t.load || 0) + '%';
-                        }
+                        const msg = document.createElement('div');
+                        msg.className = 'message';
+                        msg.innerHTML = `<div class="msg-text"><strong>${t.agent}:</strong> ${t.text}</div>`;
+                        chat.appendChild(msg);
                     });
                 }
-            } catch (e) {
-                console.log('최신 데이터 대기 중...');
-            }
+            } catch (e) {}
         }
 
-        // 초기 실행 및 30초마다 체크
-        fetchLatestDiscussion();
+        // Start Up
+        mainSymbols.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `<div class="symbol">${s.label}</div><div class="price" id="card-p-${s.binance}">$---</div><div id="card-c-${s.binance}">---%</div>`;
+            document.getElementById('main-cards').appendChild(card);
+        });
+
+        allSymbols.forEach(s => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${s}</td><td id="row-p-${s}">---</td><td id="row-c-${s}">---</td><td id="row-v-${s}" style="text-align:right;">---</td>`;
+            document.getElementById('token-table').appendChild(row);
+        });
+
         setInterval(fetchLatestDiscussion, 30000);
+        fetchLatestDiscussion();
     </script>
 </body>
 </html>
