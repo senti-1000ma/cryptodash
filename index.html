@@ -194,8 +194,8 @@
         <div class="grid" id="main-cards"></div>
 
         <div id="agent-monitor" style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--neon-blue); padding: 20px; border-radius: 4px; margin-bottom: 40px; box-shadow: var(--border-glow);">
-            <h3 style="margin-top: 0; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 0.9rem;">>> AGENT_SYSTEM_MONITORING</h3>
-            <div id="agent-status-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+            <h3 style="margin-top: 0; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 0.9rem;">>> ELITE_DUAL_AGENT_MONITOR</h3>
+            <div id="agent-status-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
                 <!-- 에이전트 상태가 여기에 동적으로 표시됩니다 -->
             </div>
         </div>
@@ -219,8 +219,8 @@
     <aside class="chat-section">
         <div class="chat-header">
             <h2 style="margin: 0; font-family: 'Orbitron'; font-size: 1.2rem; color: var(--neon-blue);">NEURAL_STRATEGY_STREAM</h2>
-            <div id="agent-mini-monitor" style="display: flex; gap: 10px; margin-top: 10px;">
-                <!-- 미니 모니터 -->
+            <div style="font-size: 0.8rem; color: var(--neon-green); margin-top: 5px;">
+                <span class="status-dot"></span>ELITE_DUAL_NODE_ACTIVE
             </div>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
@@ -245,43 +245,39 @@
         const cardsContainer = document.getElementById('main-cards');
         const tableBody = document.getElementById('token-table');
         const chatContainer = document.getElementById('chat-messages');
-        const miniMonitor = document.getElementById('agent-mini-monitor');
+        const agentStatusGrid = document.getElementById('agent-status-grid');
 
         const state = { cards: {}, rows: {}, agentStats: {} };
 
-        // Agent Metadata
+        // Agent Metadata (Elite Dual System)
         const agentMetadata = [
-            { id: 'Trend', label: 'QWEN', color: 'var(--neon-gold)' },
-            { id: 'Risk', label: 'GEMMA', color: 'var(--neon-pink)' },
-            { id: 'Sentiment', label: 'LLAMA', color: 'var(--neon-purple)' },
-            { id: 'Validator', label: 'DEEPSEEK', color: 'var(--neon-green)' }
+            { id: 'MasterAnalyst', label: 'MASTER_ANALYST (QWEN)', color: 'var(--neon-gold)' },
+            { id: 'FinalProver', label: 'FINAL_PROVER (DEEPSEEK)', color: 'var(--neon-green)' }
         ];
 
         agentMetadata.forEach(meta => {
             const el = document.createElement('div');
-            el.style.fontSize = '0.65rem';
-            el.style.padding = '4px 8px';
-            el.style.border = `1px solid ${meta.color}`;
-            el.style.borderRadius = '2px';
-            el.style.color = meta.color;
-            el.id = `mini-${meta.id}`;
-            el.innerText = `${meta.label}: IDLE`;
-            miniMonitor.appendChild(el);
-            state.agentStats[meta.id] = el;
+            el.style.borderLeft = `2px solid ${meta.color}`;
+            el.style.padding = '10px';
+            el.style.background = 'rgba(255,255,255,0.03)';
+            el.innerHTML = `
+                <div style="font-size: 0.7rem; color: ${meta.color}; font-weight: bold;">${meta.label}</div>
+                <div id="status-${meta.id}" style="font-size: 0.9rem; margin: 5px 0;">READY</div>
+                <div style="width: 100%; height: 4px; background: #334155; border-radius: 2px; overflow: hidden;">
+                    <div id="load-${meta.id}" style="width: 0%; height: 100%; background: ${meta.color}; transition: width 0.3s;"></div>
+                </div>
+            `;
+            agentStatusGrid.appendChild(el);
+            state.agentStats[meta.id] = {
+                statusEl: document.getElementById(`status-${meta.id}`),
+                loadEl: document.getElementById(`load-${meta.id}`)
+            };
         });
 
-        function updateAgentUI(id, status) {
-            if (state.agentStats[id]) {
-                state.agentStats[id].innerText = `${id.toUpperCase()}: ${status}`;
-                if (status === 'THINKING') state.agentStats[id].style.background = 'rgba(255,255,255,0.1)';
-                else state.agentStats[id].style.background = 'transparent';
-            }
-        }
-
-        // UI Setup
+        // Initialize UI
         mainSymbols.forEach(s => {
             const card = document.createElement('div');
-            card.className = 'card';
+            card.className = card;
             card.innerHTML = `<div class="symbol">${s.label}</div><div class="price" id="card-p-${s.binance}">$---</div><div class="change" id="card-c-${s.binance}">---%</div>`;
             cardsContainer.appendChild(card);
             state.cards[s.binance] = { price: document.getElementById(`card-p-${s.binance}`), change: document.getElementById(`card-c-${s.binance}`), last: 0 };
@@ -297,10 +293,8 @@
         // Chat Data
         const agents = {
             'DeusFas': { name: 'COMMANDER_DEUSFAS', color: 'var(--neon-blue)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=DeusFas&backgroundColor=00f3ff' },
-            'Trend': { name: 'TREND_NODE_QWEN', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Qwen&backgroundColor=ffcc00' },
-            'Risk': { name: 'RISK_NODE_GEMMA', color: 'var(--neon-pink)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Gemma&backgroundColor=ff00ff' },
-            'Sentiment': { name: 'PSYCH_NODE_LLAMA', color: 'var(--neon-purple)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Llama&backgroundColor=a78bfa' },
-            'Validator': { name: 'PROOF_NODE_DEEPSEEK', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=DeepSeek&backgroundColor=00ff9f' }
+            'MasterAnalyst': { name: 'MASTER_ANALYST (Qwen)', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Qwen&backgroundColor=ffcc00' },
+            'FinalProver': { name: 'FINAL_PROVER (DeepSeek)', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=DeepSeek&backgroundColor=00ff9f' }
         };
 
         function addChatMessage(agentKey, text) {
@@ -344,11 +338,13 @@
                 const data = await response.json();
                 if (data && data.thoughts) {
                     chatContainer.innerHTML = '';
-                    addChatMessage('DeusFas', `[CENTRAL_COMMAND] ${new Date(data.timestamp).toLocaleTimeString()} 자율 전략 경쟁 결과 보고를 수신했습니다.`);
+                    addChatMessage('DeusFas', `[CENTRAL_COMMAND] ${new Date(data.timestamp).toLocaleTimeString()} 정예 2인 체제 전략 보고 수신.`);
                     data.thoughts.forEach(t => {
-                        let key = t.agent.replace('Analyst', '').replace('Observer', '').replace('Validator', 'Validator');
-                        addChatMessage(key, t.text);
-                        updateAgentUI(key, t.status || 'ACTIVE');
+                        addChatMessage(t.agent, t.text);
+                        if (state.agentStats[t.agent]) {
+                            state.agentStats[t.agent].statusEl.innerText = t.status || 'ACTIVE';
+                            state.agentStats[t.agent].loadEl.style.width = (t.load || 0) + '%';
+                        }
                     });
                 }
             } catch (e) {
@@ -356,7 +352,7 @@
             }
         }
 
-        // 초기 실행 및 30초마다 체크 (경쟁 가속화)
+        // 초기 실행 및 30초마다 체크
         fetchLatestDiscussion();
         setInterval(fetchLatestDiscussion, 30000);
     </script>
