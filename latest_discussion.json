@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-08T08:47:38.702Z",
+  "timestamp": "2026-02-08T08:53:20.989Z",
   "market": {
     "lastPrice": "98450.00",
     "priceChangePercent": "+2.45",
@@ -8,27 +8,27 @@
   "thoughts": [
     {
       "agent": "TrendAnalyst",
-      "text": "현재 BTC는 상승세를 유지하며 강한 구매압력을 보이고 있지만, 고포지션 래리지가 축소되는 것을 주의해야 합니다. 따라서 현재 상황에서는 매수 포지션을 추가로 늘리는 대신 관망하거나 이익 실현에 중점을 두는 것이 바람직할 수 있습니다.",
+      "text": "BTC가격이 상승세를 이어가고 있으며, 강한 거래량 증가와 함께 전반적인 양적 확장을 나타내고 있어 상승추세의 지속 가능성을 높여줍니다. 그러나 고평가 우려와 과열 징후가 있으므로 단기적으로 이익 실현 포지션을 구축하는 것이 필요합니다.",
       "status": "ONLINE",
       "load": 100
     },
     {
       "agent": "RiskObserver",
-      "text": "[ERROR] RiskObserver 연결 실패 또는 타임아웃",
-      "status": "OFFLINE",
-      "load": 0
+      "text": "BTC 가격이 상승추세를 보이고 있지만, 최근 급등된 24시간 변동률 (+2.45%)은 과열 신호일 수 있습니다. 지나친 거래량(45210.5)과 함께 이러한 시장 상황은 가격의 돌파와 큰 하락으로 이어질 가능성을 높입니다.",
+      "status": "ONLINE",
+      "load": 83.95
     },
     {
       "agent": "Sentiment",
-      "text": "[ERROR] Sentiment 연결 실패 또는 타임아웃",
-      "status": "OFFLINE",
-      "load": 0
+      "text": "BTC 가격이 $98,450에 도달한 것은 현재 시세가 약간의 상승세를 타고 있는 반면, 시장은 여전히 위험을 무시하고 자금을 투자하는 것으로 보인다.",
+      "status": "ONLINE",
+      "load": 43.155
     },
     {
       "agent": "Validator",
-      "text": "[ERROR] Validator 연결 실패 또는 타임아웃",
-      "status": "OFFLINE",
-      "load": 0
+      "text": "",
+      "status": "ONLINE",
+      "load": 100
     }
   ]
 }
