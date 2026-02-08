@@ -60,11 +60,11 @@
         <!-- 주요 카드가 여기에 동적으로 생성됩니다 -->
     </div>
 
-    <h2 style="margin-top: 50px; color: #94a3b8;">📊 기타 토큰 실시간 현황</h2>
-    <div style="width: 100%; max-width: 1200px; background-color: #1e293b; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+    <h2 style="margin-top: 50px; color: #94a3b8;">📊 전체 토큰 실시간 현황 (Top 50+)</h2>
+    <div style="width: 100%; max-width: 1200px; background-color: #1e293b; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); max-height: 800px; overflow-y: auto;">
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
-                <tr style="border-bottom: 1px solid #334155; color: #94a3b8;">
+                <tr style="border-bottom: 1px solid #334155; color: #94a3b8; position: sticky; top: 0; background-color: #1e293b; z-index: 10;">
                     <th style="padding: 10px;">심볼</th>
                     <th style="padding: 10px;">현재가</th>
                     <th style="padding: 10px;">24h 변동</th>
@@ -87,11 +87,19 @@
             { binance: 'XRPUSDT', label: 'XRP' }
         ];
 
-        // 하단 테이블용 추가 심볼들
+        // 하단 테이블용 추가 심볼들 (대폭 확장)
         const extraSymbols = [
             'ADAUSDT', 'DOGEUSDT', 'DOTUSDT', 'MATICUSDT', 'LINKUSDT', 
             'AVAXUSDT', 'SHIBUSDT', 'TRXUSDT', 'LTCUSDT', 'UNIUSDT',
-            'NEARUSDT', 'APTUSDT', 'ARBUSDT', 'OPUSDT', 'SUIUSDT'
+            'NEARUSDT', 'APTUSDT', 'ARBUSDT', 'OPUSDT', 'SUIUSDT',
+            'PEPEUSDT', 'RNDRUSDT', 'FETUSDT', 'INJUSDT', 'TIAUSDT',
+            'SEIUSDT', 'ORDIUSDT', 'STXUSDT', 'IMXUSDT', 'BEAMXUSDT',
+            'FILUSDT', 'HBARUSDT', 'ATOMUSDT', 'KASUSDT', 'LDOUSDT',
+            'AAVEUSDT', 'MKRUSDT', 'SNXUSDT', 'RUNEUSDT', 'GRTUSDT',
+            'THETAUSDT', 'FTMUSDT', 'ALGOUSDT', 'FLOWUSDT', 'EGLDUSDT',
+            'SANDUSDT', 'MANAUSDT', 'AXSUSDT', 'WIFUSDT', 'BONKUSDT',
+            'FLOKIUSDT', 'JUPUSDT', 'PYTHUSDT', 'STRKUSDT', 'DYMUSDT',
+            'WLDUSDT', 'ARKMUSDT', 'GALAUSDT', 'JASMYUSDT', 'CHZUSDT'
         ];
 
         const allSymbols = [...mainSymbols.map(s => s.binance), ...extraSymbols];
