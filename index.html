@@ -167,10 +167,16 @@
 
                 document.getElementById('summary-balance').innerText = `$${(port.cash + port.positions.reduce((a,b)=>a+b.amount,0)).toLocaleString(undefined,{minimumFractionDigits:2})}`;
                 chat.innerHTML = '';
-                addMsg('DeusFas', `[SYSTEM] COMMAND_CYCLE_SYNC: ${new Date(disc.timestamp).toLocaleTimeString()}`);
+                
+                // 0. Commander's Opening Order
+                if (disc.commanderOrder) {
+                    await showTyping('DeusFas', 800);
+                    addMsg('DeusFas', disc.commanderOrder);
+                }
+
                 for (const t of disc.thoughts) {
                     typingName.innerText = t.agent; typingBox.style.display = 'flex';
-                    await new Promise(r => setTimeout(r, 1000));
+                    await new Promise(r => setTimeout(r, 1200));
                     typingBox.style.display = 'none'; addMsg(t.agent, t.text);
                 }
 

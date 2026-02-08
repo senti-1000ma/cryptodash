@@ -15,62 +15,47 @@ async function getMarketData() {
         const response = await axios.get('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', { timeout: 10000 });
         return response.data;
     } catch (error) {
-        return { lastPrice: '96500.00', priceChangePercent: '+1.20', volume: '38210.5', symbol: 'BTCUSDT' };
+        return { lastPrice: '97200.00', priceChangePercent: '+1.50', volume: '42000.0', symbol: 'BTCUSDT' };
     }
 }
 
 async function askAgent(agentName, prompt, systemRole) {
     const model = CONFIG.agents[agentName];
-    console.log(`[SYSTEM] ${agentName} (${model}) 가동 중...`);
+    console.log(`[COMMANDER] Ordering ${agentName} to report...`);
     try {
         const response = await axios.post(`${CONFIG.ollama_base_url}/api/generate`, {
             model: model,
-            prompt: `[ROLE: ${systemRole}]\n\n${prompt}`,
+            prompt: `[COMMAND_FROM_DEUSFAS: 즉각 보고하라]\n[ROLE: ${systemRole}]\n\n${prompt}`,
             stream: false,
-            options: { num_predict: 250, temperature: 0.5, stop: ["<|end|>"] }
-        }, { timeout: 300000 });
-        
-        let text = response.data.response.trim();
-        if (!text) throw new Error("Empty response from Ollama");
-        
-        console.log(`[SUCCESS] ${agentName} 응답 완료`);
-        return text;
+            options: { num_predict: 350, temperature: 0.7 }
+        }, { timeout: 180000 });
+        return response.data.response.trim();
     } catch (error) {
-        console.error(`[ERROR] ${agentName} 실패:`, error.message);
-        // Fallback for UI
-        return `[SYSTEM_RECOVERY] ${agentName} 엔진이 현재 천마님 PC에서 응답하지 않습니다. 터널 상태와 VRAM을 확인해 주세요. (Error: ${error.message})`;
+        return `[LATENCY_ERROR] 에이전트 ${agentName} 응답 거부. 리소스 부족 가능성.`;
     }
 }
 
 async function runAutonomousWar() {
+    console.log('--- COMMANDER DEUSFAS: STRATEGY WAR COMMENCE ---');
     const data = await getMarketData();
     const portfolio = JSON.parse(fs.readFileSync(PORTFOLIO_PATH, 'utf8'));
     
-    let userContext = "";
-    if (fs.existsSync(USER_MSG_PATH)) {
-        try {
-            const userMsgs = JSON.parse(fs.readFileSync(USER_MSG_PATH, 'utf8'));
-            if (userMsgs.length > 0) {
-                userContext = "\n[천마님의 긴급 명령]: " + userMsgs[userMsgs.length - 1].text;
-            }
-        } catch(e) {}
-    }
+    // 0. Commander's Opening Order
+    const cmdOrder = `[작전명: 천마의 눈] 현 시간부로 BTCUSDT $${data.lastPrice} 구간 정밀 분석을 명령한다. Qwen은 시장의 약점을 찾아내고, Gemma는 그 전략의 필승 가능성을 증명하라.`;
 
-    const basePrompt = `현재 시장: ${data.symbol} 가격 $${data.lastPrice}, 변동률 ${data.priceChangePercent}%. ${userContext}`;
+    // 1. Qwen Analysis
+    const qwenAnalysis = await askAgent('MasterAnalyst', 
+        `사령탑의 명령을 받들어 현재 시장의 핵심 변동성과 매수/매도 타이밍을 3문장 이내로 보고하라.`, 
+        "넌 천마님의 정예 분석가 Qwen이다. 사령탑의 명령에 복종하며 날카로운 보고를 올려라.");
 
-    // 1. MasterAnalyst
-    const masterText = await askAgent('MasterAnalyst', 
-        `${basePrompt}\n위 데이터를 바탕으로 분석하고 전략 초안을 제시하라.`, 
-        "넌 천마님의 정예 분석가야.");
-
-    // 2. FinalProver (Validator)
-    const proverText = await askAgent('FinalProver', 
-        `시장상황: ${basePrompt}\n분석가 초안: ${masterText}\n\n위 전략을 검증하고 마지막에 [ACTION: BUY/SELL/HOLD]를 명시하라.`, 
-        "넌 냉혹한 검증가야.");
+    // 2. Gemma Verdict
+    const gemmaVerdict = await askAgent('FinalProver', 
+        `Qwen의 분석을 검토하라: "${qwenAnalysis}"\n위 분석을 바탕으로 실제 수익이 가능한지 비판적으로 검증하고 최종 [ACTION: BUY/SELL/HOLD]를 결정하라.`, 
+        "넌 냉철한 검증가 Gemma다. Qwen의 실수를 찾아내고 최종 수익을 확정하라.");
 
     // 3. Trade Execution
     let tradeAction = null;
-    const decision = proverText.toUpperCase();
+    const decision = gemmaVerdict.toUpperCase();
     if (decision.includes('ACTION: BUY') && portfolio.cash > 1000) {
         const amount = 5000;
         const price = parseFloat(data.lastPrice);
@@ -96,16 +81,17 @@ async function runAutonomousWar() {
     const discussion = {
         timestamp: new Date().toISOString(),
         market: data,
+        commanderOrder: cmdOrder,
         thoughts: [
-            { agent: 'MasterAnalyst', text: masterText },
-            { agent: 'FinalProver', text: proverText }
+            { agent: 'MasterAnalyst', text: qwenAnalysis },
+            { agent: 'FinalProver', text: gemmaVerdict }
         ],
         lastTrade: tradeAction
     };
 
     fs.writeFileSync(LOG_PATH, JSON.stringify(discussion, null, 2));
     try {
-        execSync('git add portfolio.json latest_discussion.json && git commit -m "Emergency Manual Trigger" && git push origin main');
+        execSync('git add portfolio.json latest_discussion.json && git commit -m "Full Commander Control Cycle" && git push origin main');
     } catch(e) {}
 }
 
