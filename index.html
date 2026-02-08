@@ -57,25 +57,51 @@
 <body>
     <h1>🤖 듀스파스 실시간 시장 관찰</h1>
     <div class="grid" id="dashboard">
-        <!-- 카드가 여기에 동적으로 생성됩니다 -->
+        <!-- 주요 카드가 여기에 동적으로 생성됩니다 -->
+    </div>
+
+    <h2 style="margin-top: 50px; color: #94a3b8;">📊 기타 토큰 실시간 현황</h2>
+    <div style="width: 100%; max-width: 1200px; background-color: #1e293b; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid #334155; color: #94a3b8;">
+                    <th style="padding: 10px;">심볼</th>
+                    <th style="padding: 10px;">현재가</th>
+                    <th style="padding: 10px;">24h 변동</th>
+                    <th style="padding: 10px; text-align: right;">거래대금(24h)</th>
+                </tr>
+            </thead>
+            <tbody id="token-table">
+                <!-- 로우 데이터가 여기에 생성됩니다 -->
+            </tbody>
+        </table>
     </div>
 
     <script>
-        // Binance, Upbit, CoinGecko 등 다양한 API를 통합하여 시세를 가져올 수 있습니다.
-        // 여기서는 가장 유동성이 풍부한 Binance API와 국내 시세 반영을 위한 Upbit API를 함께 참조하는 예시를 보여드립니다.
-        const symbols = [
-            { binance: 'BTCUSDT', upbit: 'KRW-BTC', label: 'BTC' },
-            { binance: 'ETHUSDT', upbit: 'KRW-ETH', label: 'ETH' },
-            { binance: 'SOLUSDT', upbit: 'KRW-SOL', label: 'SOL' },
-            { binance: 'BNBUSDT', upbit: 'KRW-BNB', label: 'BNB' },
-            { binance: 'XRPUSDT', upbit: 'KRW-XRP', label: 'XRP' }
+        // 주요 카드용 심볼
+        const mainSymbols = [
+            { binance: 'BTCUSDT', label: 'BTC' },
+            { binance: 'ETHUSDT', label: 'ETH' },
+            { binance: 'SOLUSDT', label: 'SOL' },
+            { binance: 'BNBUSDT', label: 'BNB' },
+            { binance: 'XRPUSDT', label: 'XRP' }
         ];
 
-        const dashboard = document.getElementById('dashboard');
-        const cards = {};
+        // 하단 테이블용 추가 심볼들
+        const extraSymbols = [
+            'ADAUSDT', 'DOGEUSDT', 'DOTUSDT', 'MATICUSDT', 'LINKUSDT', 
+            'AVAXUSDT', 'SHIBUSDT', 'TRXUSDT', 'LTCUSDT', 'UNIUSDT',
+            'NEARUSDT', 'APTUSDT', 'ARBUSDT', 'OPUSDT', 'SUIUSDT'
+        ];
 
-        // 초기 카드 생성
-        symbols.forEach(item => {
+        const allSymbols = [...mainSymbols.map(s => s.binance), ...extraSymbols];
+        const dashboard = document.getElementById('dashboard');
+        const tokenTable = document.getElementById('token-table');
+        const cards = {};
+        const tableRows = {};
+
+        // 1. 주요 카드 초기화
+        mainSymbols.forEach(item => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
@@ -92,34 +118,56 @@
             };
         });
 
-        // 바이낸스 웹소켓 API 연결 (실시간 시세 스트림)
-        const socket = new WebSocket('wss://stream.binance.com:9443/ws/' + symbols.map(s => s.binance.toLowerCase() + '@ticker').join('/'));
+        // 2. 하단 테이블 초기화
+        extraSymbols.forEach(symbol => {
+            const row = document.createElement('tr');
+            row.style.borderBottom = '1px solid #1e293b';
+            row.innerHTML = `
+                <td style="padding: 12px; font-weight: bold; color: #38bdf8;">${symbol.replace('USDT', '')}</td>
+                <td style="padding: 12px; font-family: monospace;" id="table-price-${symbol}">---</td>
+                <td style="padding: 12px;" id="table-change-${symbol}">---</td>
+                <td style="padding: 12px; text-align: right; color: #64748b;" id="table-vol-${symbol}">---</td>
+            `;
+            tokenTable.appendChild(row);
+            tableRows[symbol] = {
+                priceEl: document.getElementById(`table-price-${symbol}`),
+                changeEl: document.getElementById(`table-change-${symbol}`),
+                volEl: document.getElementById(`table-vol-${symbol}`)
+            };
+        });
+
+        // 바이낸스 웹소켓 연결
+        const socket = new WebSocket('wss://stream.binance.com:9443/ws/' + allSymbols.map(s => s.toLowerCase() + '@ticker').join('/'));
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             const symbol = data.s;
-            const price = parseFloat(data.c).toLocaleString(undefined, { minimumFractionDigits: 2 });
+            const price = parseFloat(data.c).toLocaleString(undefined, { minimumFractionDigits: symbol.includes('SHIB') ? 6 : 2 });
             const change = parseFloat(data.P).toFixed(2);
+            const volume = (parseFloat(data.q) / 1000000).toFixed(1) + 'M';
             
+            // 카드 업데이트 (상단)
             if (cards[symbol]) {
                 const info = cards[symbol];
                 info.priceEl.innerText = `$${price}`;
                 info.changeEl.innerText = `${change >= 0 ? '+' : ''}${change}%`;
                 info.changeEl.className = `change ${change >= 0 ? 'up' : 'down'}`;
                 
-                // 가격 변동에 따른 효과
                 const currentPrice = parseFloat(data.c);
-                if (currentPrice > info.lastPrice) {
-                    info.priceEl.style.color = '#22c55e';
-                } else if (currentPrice < info.lastPrice) {
-                    info.priceEl.style.color = '#ef4444';
-                }
+                if (currentPrice > info.lastPrice) info.priceEl.style.color = '#22c55e';
+                else if (currentPrice < info.lastPrice) info.priceEl.style.color = '#ef4444';
                 
-                setTimeout(() => {
-                    info.priceEl.style.color = '#f8fafc';
-                }, 300);
-                
+                setTimeout(() => { info.priceEl.style.color = '#f8fafc'; }, 300);
                 info.lastPrice = currentPrice;
+            }
+
+            // 테이블 업데이트 (하단)
+            if (tableRows[symbol]) {
+                const info = tableRows[symbol];
+                info.priceEl.innerText = `$${price}`;
+                info.changeEl.innerText = `${change >= 0 ? '+' : ''}${change}%`;
+                info.changeEl.style.color = change >= 0 ? '#22c55e' : '#ef4444';
+                info.volEl.innerText = `$${volume}`;
             }
         };
 
