@@ -77,15 +77,36 @@
         </table>
     </div>
 
+    <h2 style="margin-top: 50px; color: #38bdf8;">🧠 전략 에이전트 실시간 토론 로그</h2>
+    <div id="strategy-log" style="width: 100%; max-width: 1200px; height: 300px; background-color: #020617; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; line-height: 1.6; border: 1px solid #1e293b;">
+        <div style="color: #64748b;">[시스템] 듀스파스 총책임자 지휘 하에 에이전트 시스템 가동 준비 중...</div>
+    </div>
+
     <script>
-        // 주요 카드용 심볼
-        const mainSymbols = [
-            { binance: 'BTCUSDT', label: 'BTC' },
-            { binance: 'ETHUSDT', label: 'ETH' },
-            { binance: 'SOLUSDT', label: 'SOL' },
-            { binance: 'BNBUSDT', label: 'BNB' },
-            { binance: 'XRPUSDT', label: 'XRP' }
-        ];
+        // 기존 스크립트 아래에 추가
+        const strategyLog = document.getElementById('strategy-log');
+
+        function addLog(agent, message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.style.marginBottom = '10px';
+            const time = new Date().toLocaleTimeString();
+            
+            let color = '#94a3b8';
+            if (agent === 'DeusFas') color = '#38bdf8';
+            else if (agent === 'TrendAnalyst') color = '#fbbf24';
+            else if (agent === 'RiskObserver') color = '#f87171';
+            else if (agent === 'StrategyValidator') color = '#34d399';
+
+            entry.innerHTML = `<span style="color: #475569;">[${time}]</span> <span style="color: ${color}; font-weight: bold;">${agent}:</span> <span style="color: #e2e8f0;">${message}</span>`;
+            strategyLog.appendChild(entry);
+            strategyLog.scrollTop = strategyLog.scrollHeight;
+        }
+
+        // 테스트 로그 (실제 연동 시 제거 또는 자동화)
+        setTimeout(() => addLog('DeusFas', '모든 전략 에이전트들에게 알린다. 현재 BTC 변동성을 기반으로 신규 전략 토론을 시작하라.'), 2000);
+        setTimeout(() => addLog('TrendAnalyst', '현재 1시간봉 기준 강한 지지선 확인 중입니다. 상승 추세 지속 가능성을 검토하겠습니다.'), 4000);
+        setTimeout(() => addLog('RiskObserver', '주의! 주요 매물대에서 대량 매도벽 포착되었습니다. 단기 리스크 관리가 필요합니다.'), 6000);
+    </script>
 
         // 하단 테이블용 추가 심볼들 (대폭 확장)
         const extraSymbols = [
