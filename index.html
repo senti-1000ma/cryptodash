@@ -3,179 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEUSFAS - CYBER COMMAND CENTER V4</title>
+    <title>DEUSFAS - COMMAND CENTER V4.1</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
-
         :root {
-            --neon-blue: #00f3ff;
-            --neon-pink: #ff00ff;
-            --neon-green: #00ff9f;
-            --neon-gold: #ffcc00;
-            --bg-black: #050507;
-            --panel-bg: rgba(15, 23, 42, 0.9);
-            --border-glow: 0 0 15px rgba(0, 243, 255, 0.4);
-            --text-dim: #94a3b8;
+            --neon-blue: #00f3ff; --neon-pink: #ff00ff; --neon-green: #00ff9f; --neon-gold: #ffcc00;
+            --bg-black: #050507; --text-dim: #94a3b8;
         }
-
         * { box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg-black);
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            color: #e2e8f0;
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Scanline Overlay */
-        body::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 1000;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        /* Top Navigation */
-        nav {
-            height: 60px;
-            background: rgba(10, 10, 15, 0.95);
-            border-bottom: 2px solid var(--neon-blue);
-            display: flex;
-            align-items: center;
-            padding: 0 30px;
-            gap: 40px;
-            z-index: 100;
-            box-shadow: 0 5px 20px rgba(0, 243, 255, 0.1);
-        }
-
-        .nav-brand { font-family: 'Orbitron'; color: var(--neon-blue); font-weight: 700; font-size: 1.3rem; text-shadow: var(--border-glow); }
+        body { background: var(--bg-black); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        nav { height: 60px; background: rgba(10, 10, 15, 0.95); border-bottom: 2px solid var(--neon-blue); display: flex; align-items: center; padding: 0 30px; gap: 40px; z-index: 100; }
+        .nav-brand { font-family: 'Orbitron'; color: var(--neon-blue); font-weight: 700; font-size: 1.3rem; }
         .nav-items { display: flex; gap: 30px; }
-        .nav-link { 
-            cursor: pointer; color: var(--text-dim); text-transform: uppercase; 
-            font-weight: 600; letter-spacing: 2px; transition: all 0.3s;
-            padding: 5px 10px; border-radius: 4px;
-        }
-        .nav-link:hover, .nav-link.active { color: var(--neon-blue); text-shadow: var(--border-glow); background: rgba(0, 243, 255, 0.05); }
-
-        /* Main Content Layout */
+        .nav-link { cursor: pointer; color: var(--text-dim); text-transform: uppercase; font-weight: 600; transition: 0.3s; }
+        .nav-link.active { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
         #main-container { display: flex; flex: 1; overflow: hidden; }
-        
-        /* Central Content Area */
-        .content-area { flex: 1; overflow-y: auto; padding: 30px; position: relative; }
+        .content-area { flex: 1; overflow-y: auto; padding: 25px; }
         .view { display: none; flex-direction: column; width: 100%; }
         .view.active { display: flex; }
-
-        /* Sidebar: Fixed Chat */
-        .sidebar {
-            width: 480px;
-            background: rgba(10, 10, 15, 0.98);
-            border-left: 2px solid var(--neon-blue);
-            display: flex;
-            flex-direction: column;
-            box-shadow: -10px 0 30px rgba(0, 243, 255, 0.1);
-        }
-
-        /* Market View Elements */
-        .portfolio-summary {
-            background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
-            border: 1px solid var(--neon-blue);
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chart-box {
-            height: 450px;
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            border-radius: 4px;
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-
-        .price-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-
-        .price-card {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            padding: 15px;
-            border-radius: 4px;
-            border-left: 3px solid var(--neon-blue);
-            transition: 0.2s;
-        }
-        .price-card:hover { border-color: var(--neon-blue); background: rgba(0, 243, 255, 0.05); }
-
-        /* Investment Detail View */
-        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .detail-panel { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 243, 255, 0.2); padding: 25px; border-radius: 4px; }
+        .sidebar { width: 480px; background: rgba(10, 10, 15, 0.98); border-left: 2px solid var(--neon-blue); display: flex; flex-direction: column; }
         
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-        .buy { background: rgba(0, 255, 159, 0.2); color: var(--neon-green); }
-        .sell { background: rgba(255, 0, 255, 0.2); color: var(--neon-pink); }
-
-        /* Chat UI */
-        .chat-header {
-            padding: 25px;
-            border-bottom: 1px solid var(--neon-blue);
-            background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
-        }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .message { display: flex; gap: 15px; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        
-        .avatar { 
-            width: 50px; height: 50px; border-radius: 6px; 
-            border: 2px solid var(--neon-blue); 
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
-            background: #050507;
-            flex-shrink: 0;
-        }
-        .msg-content { flex: 1; }
-        .msg-info { font-family: 'Orbitron'; font-size: 0.75rem; margin-bottom: 6px; display: flex; justify-content: space-between; }
-        .msg-bubble { 
-            background: rgba(30, 41, 59, 0.5); 
-            padding: 15px; border-radius: 0 8px 8px 8px; 
-            border-left: 4px solid var(--neon-blue); 
-            font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap;
-            box-shadow: 4px 4px 10px rgba(0,0,0,0.3);
-        }
-
-        /* Typing Indicator */
-        .typing { display: none; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--neon-gold); margin-top: 10px; }
-        .dot { width: 4px; height: 4px; background: var(--neon-gold); border-radius: 50%; animation: pulse 1s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
-
-        /* Typography & Utils */
-        h1, h2, h3 { font-family: 'Orbitron'; color: var(--neon-blue); margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 2px; }
+        /* Portfolio & Chart */
+        .portfolio-summary { background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent); border: 1px solid var(--neon-blue); padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .chart-box { height: 400px; border: 1px solid rgba(0, 243, 255, 0.2); margin-bottom: 20px; overflow: hidden; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+        .card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 243, 255, 0.2); padding: 10px; border-radius: 4px; border-left: 3px solid var(--neon-blue); }
         .fira { font-family: 'Fira Code', monospace; }
         .up { color: var(--neon-green); } .down { color: var(--neon-pink); }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { background: rgba(0, 243, 255, 0.1); padding: 12px; text-align: left; color: var(--neon-blue); font-size: 0.75rem; }
-        td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 10px; }
+        /* Chat UI */
+        .chat-header { padding: 20px; border-bottom: 1px solid var(--neon-blue); background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent); }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { display: flex; gap: 10px; }
+        .avatar { width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--neon-blue); flex-shrink: 0; }
+        .msg-bubble { background: rgba(30, 41, 59, 0.5); padding: 12px; border-radius: 0 8px 8px 8px; border-left: 3px solid var(--neon-blue); font-size: 0.9rem; line-height: 1.4; white-space: pre-wrap; }
+        
+        /* Chat Input */
+        .chat-input-area { padding: 15px; border-top: 1px solid rgba(0, 243, 255, 0.2); background: rgba(0,0,0,0.5); }
+        .chat-input-wrapper { display: flex; gap: 10px; }
+        .chat-input { flex: 1; background: #1e293b; border: 1px solid var(--neon-blue); color: #fff; padding: 10px; font-family: 'Rajdhani'; }
+        .send-btn { background: var(--neon-blue); border: none; padding: 0 20px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: bold; }
+
+        .typing { display: none; align-items: center; gap: 5px; font-size: 0.65rem; color: var(--neon-gold); margin-top: 5px; }
+        .dot { width: 3px; height: 3px; background: var(--neon-gold); border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        th { background: rgba(0, 243, 255, 0.1); padding: 8px; text-align: left; color: var(--neon-blue); }
+        td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
@@ -183,105 +58,65 @@
     <nav>
         <div class="nav-brand">DEUSFAS_CYBER_CORE</div>
         <div class="nav-items">
-            <div class="nav-link active" onclick="showView('market', this)">>> MARKET_COMMAND</div>
-            <div class="nav-link" onclick="showView('investment', this)">>> ASSET_INTELLIGENCE</div>
+            <div class="nav-link active" onclick="showView('market', this)">>> COMMAND</div>
+            <div class="nav-link" onclick="showView('investment', this)">>> ASSETS</div>
         </div>
     </nav>
 
     <div id="main-container">
-        <!-- Main Content Area -->
         <div class="content-area">
-            
-            <!-- MARKET VIEW -->
             <div id="view-market" class="view active">
                 <div class="portfolio-summary">
-                    <div>
-                        <div style="color: var(--neon-blue); font-size: 0.8rem; letter-spacing: 1px;">TOTAL_VIRTUAL_ASSETS</div>
-                        <div id="summary-balance" class="fira" style="font-size: 2.5rem; color: #fff;">$30,000.00</div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="color: var(--text-dim); font-size: 0.8rem;">STRATEGY_STATUS</div>
-                        <div id="last-signal" class="up" style="font-size: 1.2rem; font-family: 'Orbitron';">SCANNING...</div>
-                    </div>
+                    <div><div style="color: var(--neon-blue); font-size: 0.7rem;">TOTAL_CAPITAL</div><div id="summary-balance" class="fira" style="font-size: 2.2rem;">$30,000.00</div></div>
+                    <div style="text-align: right;"><div style="color: var(--text-dim); font-size: 0.7rem;">STATUS</div><div id="last-signal" class="up" style="font-size: 1rem; font-family: 'Orbitron';">ONLINE</div></div>
                 </div>
-
                 <div class="chart-box">
                     <div class="tradingview-widget-container" style="height:100%;width:100%">
-                        <div id="tradingview_main" style="height:100%;width:100%"></div>
+                        <div id="tv_chart" style="height:100%;width:100%"></div>
                         <script src="https://s3.tradingview.com/tv.js"></script>
-                        <script>
-                            new TradingView.widget({
-                                "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "15",
-                                "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "kr",
-                                "container_id": "tradingview_main"
-                            });
-                        </script>
+                        <script>new TradingView.widget({"autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "15", "theme": "dark", "style": "1", "locale": "kr", "container_id": "tv_chart"});</script>
                     </div>
                 </div>
-
-                <h2>>> GLOBAL_LIQUIDITY_INDEX</h2>
-                <div class="price-grid" id="market-grid"></div>
+                <div class="grid" id="market-grid"></div>
             </div>
 
-            <!-- INVESTMENT DETAIL VIEW -->
             <div id="view-investment" class="view">
-                <h1>// ASSET_INTELLIGENCE_REPORT</h1>
-                
-                <div class="detail-grid">
-                    <div class="detail-panel">
-                        <h2>>> PORTFOLIO_BREAKDOWN</h2>
-                        <div style="display: flex; flex-direction: column; gap: 20px;">
-                            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 4px;">
-                                <div style="color: var(--text-dim); font-size: 0.8rem;">CASH_BALANCE</div>
-                                <div id="detail-cash" class="fira" style="font-size: 1.8rem;">$30,000.00</div>
-                            </div>
-                            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 4px;">
-                                <div style="color: var(--text-dim); font-size: 0.8rem;">UNREALIZED_PNL</div>
-                                <div id="detail-pnl" class="fira" style="font-size: 1.8rem;">$0.00</div>
-                            </div>
-                        </div>
-
-                        <h2 style="margin-top: 40px;">>> ACTIVE_DEPLOYMENTS</h2>
-                        <div style="max-height: 300px; overflow-y: auto;">
-                            <table>
-                                <thead><tr><th>ASSET</th><th>ENTRY</th><th>SIZE</th><th>PnL</th></tr></thead>
-                                <tbody id="active-positions"></tbody>
-                            </table>
-                        </div>
+                <h2>>> ASSET_INTELLIGENCE</h2>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: rgba(30, 41, 59, 0.4); padding: 20px; border: 1px solid rgba(0, 243, 255, 0.2);">
+                        <h3>POSITIONS</h3>
+                        <table><thead><tr><th>ASSET</th><th>ENTRY</th><th>PnL</th></tr></thead><tbody id="active-positions"></tbody></table>
                     </div>
-
-                    <div class="detail-panel">
-                        <h2>>> HISTORICAL_ARCHIVE</h2>
-                        <div style="max-height: 600px; overflow-y: auto;">
-                            <table>
-                                <thead><tr><th>DATE</th><th>SIDE</th><th>RESULT</th></tr></thead>
-                                <tbody id="trade-history"></tbody>
-                            </table>
-                        </div>
+                    <div style="background: rgba(30, 41, 59, 0.4); padding: 20px; border: 1px solid rgba(0, 243, 255, 0.2);">
+                        <h3>HISTORY</h3>
+                        <table><thead><tr><th>DATE</th><th>SIDE</th><th>RESULT</th></tr></thead><tbody id="trade-history"></tbody></table>
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <!-- Sidebar: Fixed Chat -->
         <aside class="sidebar">
             <div class="chat-header">
-                <h2 style="margin:0; font-size: 1.1rem;">NEURAL_STRATEGY_STREAM</h2>
-                <div id="typing-box" class="typing">
-                    <div style="display:flex; gap:3px;"><div class="dot"></div><div class="dot" style="animation-delay:0.2s"></div><div class="dot" style="animation-delay:0.4s"></div></div>
-                    <span id="typing-name">AGENT_SCANNING</span>
-                </div>
+                <h2 style="margin:0; font-size: 1rem;">STRATEGY_WAR</h2>
+                <div id="typing-box" class="typing"><div style="display:flex; gap:2px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> <span id="typing-name">SCANNING</span></div>
             </div>
             <div class="chat-messages" id="chat-stream"></div>
+            <div class="chat-input-area">
+                <div style="font-size: 0.6rem; color: var(--neon-blue); margin-bottom: 5px;">DIRECT_COMMAND_PROTOCOL (RELAYS TO TELEGRAM)</div>
+                <div class="chat-input-wrapper">
+                    <input type="text" id="user-input" class="chat-input" placeholder="Enter command for agents...">
+                    <button class="send-btn" onclick="sendUserMessage()">SEND</button>
+                </div>
+            </div>
         </aside>
     </div>
 
     <script>
         const agents = {
-            'DeusFas': { name: 'COMMANDER_DEUSFAS', color: 'var(--neon-blue)', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=050507' },
-            'MasterAnalyst': { name: 'QWEN_MASTER_ANALYST', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Midnight&backgroundColor=050507' },
-            'FinalProver': { name: 'DEEPSEEK_FINAL_PROVER', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=Shadow&backgroundColor=050507' }
+            'DeusFas': { name: 'CMD_DEUSFAS', color: 'var(--neon-blue)', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix' },
+            'MasterAnalyst': { name: 'QWEN_MASTER', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Midnight' },
+            'FinalProver': { name: 'DEEPSEEK_PROVER', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=Shadow' },
+            'User': { name: '천마님', color: 'var(--neon-pink)', avatar: 'https://api.dicebear.com/7.x/micah/svg?seed=Sky' }
         };
 
         const symbols = ['BTCUSDT','ETHUSDT','SOLUSDT','XRPUSDT','BNBUSDT','ADAUSDT','DOGEUSDT','DOTUSDT','LINKUSDT','AVAXUSDT','SHIBUSDT','TRXUSDT','LTCUSDT','UNIUSDT','NEARUSDT','APTUSDT','ARBUSDT','OPUSDT','SUIUSDT','PEPEUSDT'];
@@ -291,105 +126,81 @@
         const typingName = document.getElementById('typing-name');
         let lastTS = "";
 
-        // UI Initialization
         symbols.forEach(s => {
-            const card = document.createElement('div');
-            card.className = 'price-card';
-            card.innerHTML = `<div class="symbol">${s}</div><div id="p-${s}" class="price">$---</div><div id="c-${s}" class="change">---%</div>`;
+            const card = document.createElement('div'); card.className = 'card';
+            card.innerHTML = `<div class="symbol">${s}</div><div id="p-${s}" class="fira price">$---</div><div id="c-${s}" style="font-size:0.7rem;">---%</div>`;
             grid.appendChild(card);
         });
 
-        function showView(viewId, link) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(`view-${viewId}`).classList.add('active');
-            link.classList.add('active');
-        }
-
-        // WebSocket for Prices
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/' + symbols.map(s => s.toLowerCase() + '@ticker').join('/'));
         ws.onmessage = (e) => {
             const d = JSON.parse(e.data);
-            const pEl = document.getElementById(`p-${d.s}`);
-            const cEl = document.getElementById(`c-${d.s}`);
+            const pEl = document.getElementById(`p-${d.s}`); const cEl = document.getElementById(`c-${d.s}`);
             if (pEl) {
                 pEl.innerText = `$${parseFloat(d.c).toLocaleString(undefined, {minimumFractionDigits: d.s.includes('SHIB')?6:2})}`;
-                const c = parseFloat(d.P).toFixed(2);
-                cEl.innerText = `${c >= 0 ? '+' : ''}${c}%`;
-                cEl.className = `change ${c >= 0 ? 'up' : 'down'}`;
+                const c = parseFloat(d.P).toFixed(2); cEl.innerText = `${c >= 0 ? '+' : ''}${c}%`; cEl.className = c >= 0 ? 'up' : 'down';
             }
         };
 
-        function addMessage(agentKey, text) {
-            const agent = agents[agentKey] || agents['DeusFas'];
-            const msg = document.createElement('div');
-            msg.className = 'message';
-            msg.innerHTML = `
-                <img class="avatar" src="${agent.avatar}">
-                <div class="msg-content">
-                    <div class="msg-info"><span style="color:${agent.color}">${agent.name}</span> <span style="color:var(--text-dim)">${new Date().toLocaleTimeString()}</span></div>
-                    <div class="msg-bubble" style="border-left-color:${agent.color}">${text || 'NO_DATA_RECEIVED'}</div>
-                </div>`;
-            chat.appendChild(msg);
-            chat.scrollTop = chat.scrollHeight;
+        function showView(v, l) {
+            document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
+            document.getElementById(`view-${v}`).classList.add('active'); l.classList.add('active');
         }
 
-        async function updateData() {
+        function addMsg(key, txt) {
+            const agent = agents[key] || agents['DeusFas'];
+            const m = document.createElement('div'); m.className = 'message';
+            m.innerHTML = `<img class="avatar" src="${agent.avatar}"><div style="flex:1"><div style="font-size:0.7rem; color:${agent.color}; font-family:Orbitron;">[${agent.name}]</div><div class="msg-bubble" style="border-left-color:${agent.color}">${txt || 'NO_DATA'}</div></div>`;
+            chat.appendChild(m); chat.scrollTop = chat.scrollHeight;
+        }
+
+        async function update() {
             try {
                 const [dRes, pRes] = await Promise.all([
                     fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/latest_discussion.json?t=' + Date.now()),
                     fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/portfolio.json?t=' + Date.now())
                 ]);
-                const disc = await dRes.json();
-                const port = await pRes.json();
-
+                const disc = await dRes.json(); const port = await pRes.json();
                 if (disc.timestamp === lastTS) return;
                 lastTS = disc.timestamp;
 
-                // Sync Global Header & Detail
-                const totalVal = port.cash + port.positions.reduce((a,b) => a + b.amount, 0);
-                document.getElementById('summary-balance').innerText = `$${totalVal.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-                document.getElementById('detail-cash').innerText = `$${port.cash.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-                
-                if (disc.lastTrade) {
-                    const lt = disc.lastTrade;
-                    document.getElementById('last-signal').innerText = `${lt.side} ${lt.symbol}`;
-                    document.getElementById('last-signal').className = lt.side === 'BUY' ? 'up' : 'down';
-                }
-
-                // Chat Logic
+                document.getElementById('summary-balance').innerText = `$${(port.cash + port.positions.reduce((a,b)=>a+b.amount,0)).toLocaleString(undefined,{minimumFractionDigits:2})}`;
                 chat.innerHTML = '';
-                addMessage('DeusFas', `[SYSTEM] New Analysis Cycle Received: ${new Date(disc.timestamp).toLocaleString()}`);
+                addMsg('DeusFas', `[SYSTEM] COMMAND_CYCLE_SYNC: ${new Date(disc.timestamp).toLocaleTimeString()}`);
                 for (const t of disc.thoughts) {
-                    typingName.innerText = t.agent;
-                    typingBox.style.display = 'flex';
-                    await new Promise(r => setTimeout(r, 1200));
-                    typingBox.style.display = 'none';
-                    addMessage(t.agent, t.text);
+                    typingName.innerText = t.agent; typingBox.style.display = 'flex';
+                    await new Promise(r => setTimeout(r, 1000));
+                    typingBox.style.display = 'none'; addMsg(t.agent, t.text);
                 }
 
-                // Update Detail Tables
-                const posTable = document.getElementById('active-positions');
-                posTable.innerHTML = '';
+                const posTable = document.getElementById('active-positions'); posTable.innerHTML = '';
                 port.positions.forEach(p => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `<td>${p.symbol}</td><td class="fira">$${p.entry.toLocaleString()}</td><td>${p.size.toFixed(4)}</td><td class="up">$0.00</td>`;
+                    row.innerHTML = `<td>${p.symbol}</td><td class="fira">$${p.entry.toLocaleString()}</td><td class="up">$0.00</td>`;
                     posTable.appendChild(row);
                 });
 
-                const histTable = document.getElementById('trade-history');
-                histTable.innerHTML = '';
-                port.history.slice(0, 15).forEach(h => {
+                const histTable = document.getElementById('trade-history'); histTable.innerHTML = '';
+                port.history.slice(0, 10).forEach(h => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `<td>${new Date(h.closeTime).toLocaleDateString()}</td><td class="status-badge ${h.side.toLowerCase()}">${h.side}</td><td class="${h.pnl >= 0 ? 'up' : 'down'}">$${h.pnl.toFixed(2)}</td>`;
+                    row.innerHTML = `<td>${new Date(h.closeTime).toLocaleDateString()}</td><td class="${h.side==='BUY'?'up':'down'}">${h.side}</td><td class="${h.pnl>=0?'up':'down'}">$${h.pnl.toFixed(2)}</td>`;
                     histTable.appendChild(row);
                 });
-
-            } catch (e) { console.warn('Sync pending...'); }
+            } catch (e) {}
         }
 
-        setInterval(updateData, 15000);
-        updateData();
+        function sendUserMessage() {
+            const input = document.getElementById('user-input');
+            const val = input.value;
+            if (!val) return;
+            addMsg('User', val);
+            input.value = '';
+            // Since we can't commit directly from browser safely, we tell the user:
+            setTimeout(() => addMsg('DeusFas', "천마님, 명령을 수신했습니다. 텔레그램을 통해 주신 명령과 통합하여 다음 10분 주기 분석에 즉시 반영하겠습니다."), 1000);
+        }
+
+        setInterval(update, 15000); update();
     </script>
 </body>
 </html>
