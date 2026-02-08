@@ -300,18 +300,33 @@
             }
         };
 
-        // Autonomous Feed
-        const autonomousLogs = [
-            ['DeusFas', 'SYSTEM_INITIALIZED: 실시간 자율 토론 모드를 가동합니다. 시장 데이터를 바탕으로 즉각적인 전략 수립을 개시하라.'],
-            ['Trend', 'DATA_SCAN: BTC 15분봉 기준 볼린저 밴드 상단 돌파 시도 포착. 상방 압력이 강해지고 있습니다.'],
-            ['Risk', 'ALERT: 선물 시장 미체결 약정(OI) 급증 확인. 롱 스퀴즈 가능성이 있으니 레버리지 관리에 유의하십시오.'],
-            ['Sentiment', 'FEAR_GREED: 탐욕 지수 72포인트. 개미들의 추격 매수세가 붙기 시작했습니다. 고래들의 차익 실현 물량을 경계해야 합니다.'],
-            ['Validator', 'LOGIC_CHECK: Trend와 Risk의 상충 의견 검토 결과, 돌파 매수보다는 밴드 상단 터치 후 눌림목 지지 확인 후 진입이 손익비 측면에서 우월함을 증명합니다.']
-        ];
+        // Autonomous Feed (Real-time update attempt)
+        async function fetchLatestDiscussion() {
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/latest_discussion.json');
+                const data = await response.json();
+                if (data && data.thoughts) {
+                    // 기존 메시지 지우고 새로 고침 (선택 사항)
+                    chatContainer.innerHTML = '';
+                    addChatMessage('DeusFas', `[SYSTEM_REPORT] ${new Date(data.timestamp).toLocaleString()} 자율 전략 회의 결과를 수신했습니다.`);
+                    data.thoughts.forEach(t => {
+                        let key = t.agent.replace('Analyst', '').replace('Observer', '').replace('Validator', 'Validator');
+                        // 맵핑 보정
+                        if (key === 'Trend') key = 'Trend';
+                        if (key === 'Risk') key = 'Risk';
+                        if (key === 'Sentiment') key = 'Sentiment';
+                        if (key === 'Validator') key = 'Validator';
+                        addChatMessage(key, t.text);
+                    });
+                }
+            } catch (e) {
+                console.log('최신 토론 데이터를 가져오는 중...');
+            }
+        }
 
-        autonomousLogs.forEach((log, i) => {
-            setTimeout(() => addChatMessage(log[0], log[1]), 2000 * (i + 1));
-        });
+        // 초기 실행 및 1분마다 체크
+        fetchLatestDiscussion();
+        setInterval(fetchLatestDiscussion, 60000);
     </script>
 </body>
 </html>
