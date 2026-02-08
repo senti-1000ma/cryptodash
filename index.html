@@ -193,6 +193,13 @@
         <h1>// DEUSFAS_CYBER_TERMINAL</h1>
         <div class="grid" id="main-cards"></div>
 
+        <div id="agent-monitor" style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--neon-blue); padding: 20px; border-radius: 4px; margin-bottom: 40px; box-shadow: var(--border-glow);">
+            <h3 style="margin-top: 0; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 0.9rem;">>> AGENT_SYSTEM_MONITORING</h3>
+            <div id="agent-status-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                <!-- 에이전트 상태가 여기에 동적으로 표시됩니다 -->
+            </div>
+        </div>
+
         <h2 style="color: var(--neon-blue); letter-spacing: 2px;">>> MARKET_DATABASE_ACCESS</h2>
         <div class="table-container">
             <table>
@@ -212,8 +219,8 @@
     <aside class="chat-section">
         <div class="chat-header">
             <h2 style="margin: 0; font-family: 'Orbitron'; font-size: 1.2rem; color: var(--neon-blue);">NEURAL_STRATEGY_STREAM</h2>
-            <div style="font-size: 0.8rem; color: var(--neon-green); margin-top: 5px;">
-                <span class="status-dot"></span>4_NODES_ACTIVE_AUTONOMOUS
+            <div id="agent-mini-monitor" style="display: flex; gap: 10px; margin-top: 10px;">
+                <!-- 미니 모니터 -->
             </div>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
@@ -238,8 +245,38 @@
         const cardsContainer = document.getElementById('main-cards');
         const tableBody = document.getElementById('token-table');
         const chatContainer = document.getElementById('chat-messages');
+        const miniMonitor = document.getElementById('agent-mini-monitor');
 
-        const state = { cards: {}, rows: {} };
+        const state = { cards: {}, rows: {}, agentStats: {} };
+
+        // Agent Metadata
+        const agentMetadata = [
+            { id: 'Trend', label: 'QWEN', color: 'var(--neon-gold)' },
+            { id: 'Risk', label: 'GEMMA', color: 'var(--neon-pink)' },
+            { id: 'Sentiment', label: 'LLAMA', color: 'var(--neon-purple)' },
+            { id: 'Validator', label: 'DEEPSEEK', color: 'var(--neon-green)' }
+        ];
+
+        agentMetadata.forEach(meta => {
+            const el = document.createElement('div');
+            el.style.fontSize = '0.65rem';
+            el.style.padding = '4px 8px';
+            el.style.border = `1px solid ${meta.color}`;
+            el.style.borderRadius = '2px';
+            el.style.color = meta.color;
+            el.id = `mini-${meta.id}`;
+            el.innerText = `${meta.label}: IDLE`;
+            miniMonitor.appendChild(el);
+            state.agentStats[meta.id] = el;
+        });
+
+        function updateAgentUI(id, status) {
+            if (state.agentStats[id]) {
+                state.agentStats[id].innerText = `${id.toUpperCase()}: ${status}`;
+                if (status === 'THINKING') state.agentStats[id].style.background = 'rgba(255,255,255,0.1)';
+                else state.agentStats[id].style.background = 'transparent';
+            }
+        }
 
         // UI Setup
         mainSymbols.forEach(s => {
@@ -267,7 +304,7 @@
         };
 
         function addChatMessage(agentKey, text) {
-            const agent = agents[agentKey];
+            const agent = agents[agentKey] || agents['DeusFas'];
             const msg = document.createElement('div');
             msg.className = 'message';
             msg.innerHTML = `
@@ -300,33 +337,28 @@
             }
         };
 
-        // Autonomous Feed (Real-time update attempt)
+        // Autonomous Feed (Real-time update)
         async function fetchLatestDiscussion() {
             try {
-                const response = await fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/latest_discussion.json');
+                const response = await fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/latest_discussion.json?t=' + Date.now());
                 const data = await response.json();
                 if (data && data.thoughts) {
-                    // 기존 메시지 지우고 새로 고침 (선택 사항)
                     chatContainer.innerHTML = '';
-                    addChatMessage('DeusFas', `[SYSTEM_REPORT] ${new Date(data.timestamp).toLocaleString()} 자율 전략 회의 결과를 수신했습니다.`);
+                    addChatMessage('DeusFas', `[CENTRAL_COMMAND] ${new Date(data.timestamp).toLocaleTimeString()} 자율 전략 경쟁 결과 보고를 수신했습니다.`);
                     data.thoughts.forEach(t => {
                         let key = t.agent.replace('Analyst', '').replace('Observer', '').replace('Validator', 'Validator');
-                        // 맵핑 보정
-                        if (key === 'Trend') key = 'Trend';
-                        if (key === 'Risk') key = 'Risk';
-                        if (key === 'Sentiment') key = 'Sentiment';
-                        if (key === 'Validator') key = 'Validator';
                         addChatMessage(key, t.text);
+                        updateAgentUI(key, t.status || 'ACTIVE');
                     });
                 }
             } catch (e) {
-                console.log('최신 토론 데이터를 가져오는 중...');
+                console.log('최신 데이터 대기 중...');
             }
         }
 
-        // 초기 실행 및 1분마다 체크
+        // 초기 실행 및 30초마다 체크 (경쟁 가속화)
         fetchLatestDiscussion();
-        setInterval(fetchLatestDiscussion, 60000);
+        setInterval(fetchLatestDiscussion, 30000);
     </script>
 </body>
 </html>

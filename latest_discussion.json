@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-08T08:42:47.242Z",
+  "timestamp": "2026-02-08T08:47:38.702Z",
   "market": {
     "lastPrice": "98450.00",
     "priceChangePercent": "+2.45",
@@ -8,19 +8,27 @@
   "thoughts": [
     {
       "agent": "TrendAnalyst",
-      "text": "TrendAnalyst 연결 실패 또는 타임아웃"
+      "text": "현재 BTC는 상승세를 유지하며 강한 구매압력을 보이고 있지만, 고포지션 래리지가 축소되는 것을 주의해야 합니다. 따라서 현재 상황에서는 매수 포지션을 추가로 늘리는 대신 관망하거나 이익 실현에 중점을 두는 것이 바람직할 수 있습니다.",
+      "status": "ONLINE",
+      "load": 100
     },
     {
       "agent": "RiskObserver",
-      "text": "RiskObserver 연결 실패 또는 타임아웃"
+      "text": "[ERROR] RiskObserver 연결 실패 또는 타임아웃",
+      "status": "OFFLINE",
+      "load": 0
     },
     {
       "agent": "Sentiment",
-      "text": "**현재의 상황**\n\n*   **가격**: $98,450\n*   **24시간 변동률**: +2.45%\n*   **거래량**: 45,210.5\n\n**Sentiment Analysis**\n\nBTC 가격이 오르면서 시장의 분위기는 긍정적입니다. 24시간 변동률은 2.45%로 높고 이는 지속적인 상승에 대한 가능성을 암시합니다.\n\n이러한 추세는 단기적으로 더 많은 투자자와 거래자의 참여를 유도할 수 있습니다."
+      "text": "[ERROR] Sentiment 연결 실패 또는 타임아웃",
+      "status": "OFFLINE",
+      "load": 0
     },
     {
       "agent": "Validator",
-      "text": "Validator 연결 실패 또는 타임아웃"
+      "text": "[ERROR] Validator 연결 실패 또는 타임아웃",
+      "status": "OFFLINE",
+      "load": 0
     }
   ]
 }
