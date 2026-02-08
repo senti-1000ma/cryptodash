@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>듀스파스 크립토 대시보드</title>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #38bdf8;
+            margin-bottom: 30px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .card {
+            background-color: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .symbol {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #94a3b8;
+        }
+        .price {
+            font-size: 2rem;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .change {
+            font-size: 1rem;
+        }
+        .up { color: #22c55e; }
+        .down { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <h1>🤖 듀스파스 실시간 시장 관찰</h1>
+    <div class="grid" id="dashboard">
+        <!-- 카드가 여기에 동적으로 생성됩니다 -->
+    </div>
+
+    <script>
+        const symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT', 'DOGEUSDT'];
+        const dashboard = document.getElementById('dashboard');
+        const cards = {};
+
+        // 초기 카드 생성
+        symbols.forEach(symbol => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="symbol">${symbol}</div>
+                <div class="price" id="price-${symbol}">---</div>
+                <div class="change" id="change-${symbol}">---</div>
+            `;
+            dashboard.appendChild(card);
+            cards[symbol] = {
+                priceEl: document.getElementById(`price-${symbol}`),
+                changeEl: document.getElementById(`change-${symbol}`),
+                lastPrice: 0
+            };
+        });
+
+        // 바이낸스 웹소켓 연결
+        const socket = new WebSocket('wss://stream.binance.com:9443/ws/' + symbols.map(s => s.toLowerCase() + '@ticker').join('/'));
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            const symbol = data.s;
+            const price = parseFloat(data.c).toFixed(symbol.includes('DOGE') ? 4 : 2);
+            const change = parseFloat(data.P).toFixed(2);
+            
+            if (cards[symbol]) {
+                const info = cards[symbol];
+                info.priceEl.innerText = `$${price}`;
+                info.changeEl.innerText = `${change}%`;
+                info.changeEl.className = `change ${change >= 0 ? 'up' : 'down'}`;
+                
+                if (parseFloat(price) > info.lastPrice) {
+                    info.priceEl.style.color = '#22c55e';
+                } else if (parseFloat(price) < info.lastPrice) {
+                    info.priceEl.style.color = '#ef4444';
+                }
+                
+                setTimeout(() => {
+                    info.priceEl.style.color = '#f8fafc';
+                }, 500);
+                
+                info.lastPrice = parseFloat(price);
+            }
+        };
+
+        socket.onerror = (error) => {
+            console.error('WebSocket Error:', error);
+        };
+    </script>
+</body>
+</html>
