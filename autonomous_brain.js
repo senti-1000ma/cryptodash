@@ -42,6 +42,10 @@ async function runAutonomousWar() {
 
     console.log('--- ROUND 1: INITIAL ANALYSIS ---');
     const masterInitial = await askAgent('MasterAnalyst', `${basePrompt} 현재 시장의 단기 방향성을 예측하고 근거를 대라.`, "넌 공격적인 분석가야.");
+    if (masterInitial.includes('[LATENCY_ERROR]')) {
+        console.log('Skipping update due to agent error');
+        return;
+    }
     
     console.log('--- ROUND 2: CRITICAL REVIEW ---');
     const proverCritique = await askAgent('FinalProver', `분석가 의견: ${masterInitial}\n위 분석의 기술적 허점을 지적하고 리스크를 경고하라.`, "넌 보수적이고 냉철한 검증가야.");
@@ -50,6 +54,11 @@ async function runAutonomousWar() {
     const finalDecision = await askAgent('FinalProver', 
         `시장상황: ${basePrompt}\n분석가: ${masterInitial}\n본인의비판: ${proverCritique}\n모든 것을 종합하여 최종 [ACTION: BUY/SELL/HOLD]를 결정하라.`, 
         "넌 최종 의사결정권자야. 수익을 증명하라.");
+
+    if (finalDecision.includes('[LATENCY_ERROR]')) {
+        console.log('Skipping update due to decision error');
+        return;
+    }
 
     // Trade Execution
     let tradeAction = null;

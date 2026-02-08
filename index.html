@@ -3,271 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEUSFAS - CYBER COMMAND CENTER</title>
+    <title>DEUSFAS - AUTO TRADING V3</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
-
         :root {
-            --neon-blue: #00f3ff;
-            --neon-pink: #ff00ff;
-            --neon-green: #00ff9f;
-            --neon-gold: #ffcc00;
-            --bg-black: #050507;
-            --panel-bg: rgba(15, 23, 42, 0.8);
-            --border-glow: 0 0 10px rgba(0, 243, 255, 0.3);
-            --text-dim: #94a3b8;
+            --neon-blue: #00f3ff; --neon-pink: #ff00ff; --neon-green: #00ff9f; --neon-gold: #ffcc00;
+            --bg-black: #050507; --text-dim: #94a3b8;
         }
-
-        body {
-            background-color: var(--bg-black);
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px;
-            color: #e2e8f0;
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Scanline Effect */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 100;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        .market-section {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            border-right: 1px solid rgba(0, 243, 255, 0.2);
-            position: relative;
-        }
-
-        .chat-section {
-            width: 450px;
-            background: rgba(10, 10, 15, 0.95);
-            display: flex;
-            flex-direction: column;
-            border-left: 2px solid var(--neon-blue);
-            box-shadow: -10px 0 30px rgba(0, 243, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            color: var(--neon-blue);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: var(--border-glow);
-            margin: 0 0 20px 0;
-        }
-
-        /* Portfolio Banner */
-        .portfolio-banner {
-            background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
-            border: 1px solid var(--neon-blue);
-            padding: 15px 20px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 4px;
-        }
-
-        #tradingview-container {
-            height: 400px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            padding: 12px;
-            border-radius: 4px;
-            position: relative;
-            transition: all 0.2s ease;
-        }
-
-        .card:hover { border-color: var(--neon-blue); background: rgba(0, 243, 255, 0.05); }
-        .symbol { font-size: 0.8rem; color: var(--neon-blue); font-weight: 700; }
-        .price { font-size: 1.2rem; margin: 5px 0; font-family: 'Fira Code', monospace; }
-        .change { font-weight: 700; font-size: 0.8rem; }
-        .up { color: var(--neon-green); }
-        .down { color: var(--neon-pink); }
-
-        /* Trade Log */
-        .log-container {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(0, 243, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th { background: rgba(0, 243, 255, 0.1); padding: 10px; text-align: left; color: var(--neon-blue); }
-        td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-
-        /* Chat System */
-        .chat-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--neon-blue);
-            background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
-        }
-
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .message { display: flex; gap: 12px; animation: slideIn 0.3s ease-out; }
+        body { background: var(--bg-black); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .market-section { flex: 1; padding: 20px; overflow-y: auto; border-right: 1px solid rgba(0, 243, 255, 0.2); }
+        .chat-section { width: 450px; background: rgba(10, 10, 15, 0.95); display: flex; flex-direction: column; border-left: 2px solid var(--neon-blue); }
+        h1 { font-family: 'Orbitron'; color: var(--neon-blue); font-size: 1.5rem; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); margin: 0 0 15px 0; }
+        .portfolio-banner { background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent); border: 1px solid var(--neon-blue); padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; }
+        #tradingview-container { height: 350px; margin-bottom: 20px; border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 4px; overflow: hidden; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 243, 255, 0.2); padding: 10px; border-radius: 4px; border-left: 3px solid var(--neon-blue); }
+        .symbol { font-size: 0.75rem; color: var(--neon-blue); font-weight: 700; }
+        .price { font-size: 1.1rem; margin: 3px 0; font-family: 'Fira Code', monospace; }
+        .change { font-weight: 700; font-size: 0.75rem; }
+        .up { color: var(--neon-green); } .down { color: var(--neon-pink); }
+        .log-container { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 4px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        th { background: rgba(0, 243, 255, 0.1); padding: 8px; text-align: left; color: var(--neon-blue); }
+        td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .chat-header { padding: 15px; border-bottom: 1px solid var(--neon-blue); background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent); }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { display: flex; gap: 10px; animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-
-        .avatar { width: 45px; height: 45px; border-radius: 4px; border: 2px solid var(--neon-blue); box-shadow: var(--border-glow); flex-shrink: 0; }
-        .msg-body { flex: 1; }
-        .msg-sender { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; margin-bottom: 6px; }
-        .msg-text { background: rgba(30, 41, 59, 0.3); padding: 12px; border-radius: 0 4px 4px 4px; border-left: 3px solid var(--neon-blue); font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; }
-
-        /* Typing Indicator */
-        .typing-indicator { display: none; font-size: 0.7rem; color: var(--neon-gold); margin-top: 8px; align-items: center; gap: 8px; }
-        .dot { width: 4px; height: 4px; background: var(--neon-gold); border-radius: 50%; animation: blink 1s infinite; }
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
+        .avatar { width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--neon-blue); box-shadow: 0 0 5px rgba(0, 243, 255, 0.3); }
+        .msg-sender { font-family: 'Orbitron'; font-size: 0.7rem; margin-bottom: 4px; }
+        .msg-text { background: rgba(30, 41, 59, 0.3); padding: 10px; border-radius: 4px; border-left: 2px solid var(--neon-blue); font-size: 0.85rem; line-height: 1.4; white-space: pre-wrap; }
+        .typing-indicator { display: none; font-size: 0.65rem; color: var(--neon-gold); margin-top: 5px; align-items: center; gap: 5px; }
+        .dot { width: 3px; height: 3px; background: var(--neon-gold); border-radius: 50%; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-
-        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 10px; }
     </style>
 </head>
 <body>
-
     <main class="market-section">
-        <h1>// DEUSFAS_CYBER_TERMINAL_V3</h1>
-        
+        <h1>// DEUSFAS_COMMAND_V3</h1>
         <div class="portfolio-banner">
-            <div>
-                <div style="color: var(--neon-blue); font-size: 0.75rem; letter-spacing: 1px;">TOTAL_CAPITAL (ALGO_PAPER)</div>
-                <div id="total-val" style="font-size: 2rem; font-family: 'Fira Code'; color: #fff;">$30,000.00</div>
-            </div>
-            <div style="text-align: right;">
-                <div style="color: var(--text-dim); font-size: 0.75rem;">STRATEGY_SIGNAL</div>
-                <div id="last-action" style="font-size: 1.1rem; color: var(--neon-green); font-family: 'Orbitron';">INITIALIZING...</div>
-            </div>
+            <div><div style="color: var(--neon-blue); font-size: 0.7rem;">TOTAL_CAPITAL (ALGO)</div><div id="total-val" style="font-size: 1.8rem; font-family: 'Fira Code'; color: #fff;">$30,000.00</div></div>
+            <div style="text-align: right;"><div style="color: var(--text-dim); font-size: 0.7rem;">SIGNAL</div><div id="last-action" style="font-size: 1rem; color: var(--neon-green); font-family: 'Orbitron';">SYNCING...</div></div>
         </div>
-
         <div id="tradingview-container">
             <div class="tradingview-widget-container" style="height:100%;width:100%">
               <div id="tradingview_chart" style="height:100%;width:100%"></div>
-              <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-              <script type="text/javascript">
-              new TradingView.widget({
-                "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "15", "timezone": "Etc/UTC",
-                "theme": "dark", "style": "1", "locale": "kr", "toolbar_bg": "#f1f3f6",
-                "enable_publishing": false, "hide_side_toolbar": false, "allow_symbol_change": true,
-                "container_id": "tradingview_chart"
-              });
+              <script src="https://s3.tradingview.com/tv.js"></script>
+              <script>
+              new TradingView.widget({"autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "15", "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "kr", "container_id": "tradingview_chart"});
               </script>
             </div>
         </div>
-
-        <h2 style="font-size: 0.9rem; color: var(--neon-blue);">>> GLOBAL_LIQUIDITY_STREAM</h2>
         <div class="grid" id="main-cards"></div>
-        
-        <h2 style="font-size: 0.9rem; color: var(--neon-blue);">>> EXECUTION_CHRONICLE</h2>
-        <div class="log-container">
-            <table>
-                <thead><tr><th>TIMESTAMP</th><th>ACTION</th><th>PRICE</th><th>SIZE</th><th>PnL</th></tr></thead>
-                <tbody id="trade-log"></tbody>
-            </table>
-        </div>
+        <div class="log-container"><table><thead><tr><th>TIME</th><th>ACTION</th><th>PRICE</th><th>PnL</th></tr></thead><tbody id="trade-log"></tbody></table></div>
     </main>
-
     <aside class="chat-section">
-        <div class="chat-header">
-            <h2 style="margin: 0; font-family: 'Orbitron'; font-size: 1.1rem; color: var(--neon-blue);">NEURAL_STRATEGY_WAR</h2>
-            <div id="typing-ui" class="typing-indicator">
-                <div style="display:flex; gap:3px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                <span id="typing-agent">AGENT_SCANNING</span>
-            </div>
-        </div>
+        <div class="chat-header"><h2 style="margin: 0; font-family: 'Orbitron'; font-size: 1rem; color: var(--neon-blue);">STRATEGY_WAR</h2><div id="typing-ui" class="typing-indicator"><div style="display:flex; gap:2px;"><div class="dot"></div><div class="dot" style="animation-delay:0.2s"></div><div class="dot" style="animation-delay:0.4s"></div></div><span id="typing-agent">SCANNING</span></div></div>
         <div class="chat-messages" id="chat-messages"></div>
     </aside>
-
     <script>
         const agents = {
-            'DeusFas': { name: 'COMMANDER_DEUSFAS', color: 'var(--neon-blue)', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=050507' },
-            'MasterAnalyst': { name: 'QWEN_MASTER_ANALYST', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Midnight&backgroundColor=050507' },
-            'FinalProver': { name: 'DEEPSEEK_FINAL_PROVER', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=Shadow&backgroundColor=050507' }
+            'DeusFas': { name: 'CMD_DEUSFAS', color: 'var(--neon-blue)', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=050507' },
+            'MasterAnalyst': { name: 'QWEN_ANALYSIS', color: 'var(--neon-gold)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Midnight&backgroundColor=050507' },
+            'FinalProver': { name: 'DEEPSEEK_PROOF', color: 'var(--neon-green)', avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=Shadow&backgroundColor=050507' }
         };
-
-        const symbols = [
-            'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT', 
-            'DOTUSDT', 'LINKUSDT', 'AVAXUSDT', 'SHIBUSDT', 'TRXUSDT', 'LTCUSDT', 'UNIUSDT',
-            'NEARUSDT', 'APTUSDT', 'ARBUSDT', 'OPUSDT', 'SUIUSDT', 'PEPEUSDT'
-        ];
-
+        const symbols = ['BTCUSDT','ETHUSDT','SOLUSDT','XRPUSDT','BNBUSDT','ADAUSDT','DOGEUSDT','DOTUSDT','LINKUSDT','AVAXUSDT','SHIBUSDT','TRXUSDT','LTCUSDT','UNIUSDT','NEARUSDT','APTUSDT','ARBUSDT','OPUSDT','SUIUSDT','PEPEUSDT'];
         const cardsContainer = document.getElementById('main-cards');
         const chatContainer = document.getElementById('chat-messages');
         const typingUI = document.getElementById('typing-ui');
         const typingAgent = document.getElementById('typing-agent');
+        let lastTimestamp = "";
 
-        // Create Price Cards
         symbols.forEach(s => {
-            const card = document.createElement('div');
-            card.className = 'card';
+            const card = document.createElement('div'); card.className = 'card';
             card.innerHTML = `<div class="symbol">${s}</div><div class="price" id="p-${s}">$---</div><div id="c-${s}" class="change">---%</div>`;
             cardsContainer.appendChild(card);
         });
 
-        // WebSocket for prices
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/' + symbols.map(s => s.toLowerCase() + '@ticker').join('/'));
         ws.onmessage = (e) => {
             const d = JSON.parse(e.data);
-            const pEl = document.getElementById(`p-${d.s}`);
-            const cEl = document.getElementById(`c-${d.s}`);
+            const pEl = document.getElementById(`p-${d.s}`); const cEl = document.getElementById(`c-${d.s}`);
             if (pEl) pEl.innerText = `$${parseFloat(d.c).toLocaleString(undefined, {minimumFractionDigits: d.s.includes('SHIB')?6:2})}`;
-            if (cEl) {
-                const c = parseFloat(d.P).toFixed(2);
-                cEl.innerText = `${c >= 0 ? '+' : ''}${c}%`;
-                cEl.className = `change ${c >= 0 ? 'up' : 'down'}`;
-            }
+            if (cEl) { const c = parseFloat(d.P).toFixed(2); cEl.innerText = `${c >= 0 ? '+' : ''}${c}%`; cEl.className = `change ${c >= 0 ? 'up' : 'down'}`; }
         };
 
         function addChatMessage(agentKey, text) {
             const agent = agents[agentKey] || agents['DeusFas'];
-            const msg = document.createElement('div');
-            msg.className = 'message';
-            msg.innerHTML = `
-                <img class="avatar" src="${agent.avatar}">
-                <div class="msg-body">
-                    <div class="msg-sender" style="color:${agent.color}">[${agent.name}]</div>
-                    <div class="msg-text" style="border-left-color:${agent.color}">${text}</div>
-                </div>`;
-            chatContainer.appendChild(msg);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function showTyping(name, duration) {
-            typingAgent.innerText = `${name} IS THINKING...`;
-            typingUI.style.display = 'flex';
-            return new Promise(res => setTimeout(() => {
-                typingUI.style.display = 'none';
-                res();
-            }, duration));
+            const msg = document.createElement('div'); msg.className = 'message';
+            msg.innerHTML = `<img class="avatar" src="${agent.avatar}"><div class="msg-body"><div class="msg-sender" style="color:${agent.color}">[${agent.name}]</div><div class="msg-text" style="border-left-color:${agent.color}">${text || '(NO_SIGNAL)'}</div></div>`;
+            chatContainer.appendChild(msg); chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         async function refreshData() {
@@ -276,47 +103,30 @@
                     fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/latest_discussion.json?t=' + Date.now()),
                     fetch('https://raw.githubusercontent.com/senti-1000ma/cryptodash/main/portfolio.json?t=' + Date.now())
                 ]);
-                const disc = await discRes.json();
-                const port = await portRes.json();
+                const disc = await discRes.json(); const port = await portRes.json();
+                if (disc.timestamp === lastTimestamp) return;
+                lastTimestamp = disc.timestamp;
 
-                // Update Header
-                const total = port.cash + port.positions.reduce((a,b)=>a+b.amount, 0);
-                document.getElementById('total-val').innerText = `$${total.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-                if (disc.lastTrade) {
-                    const lt = disc.lastTrade;
-                    document.getElementById('last-action').innerText = `${lt.side} ${lt.symbol}`;
-                    document.getElementById('last-action').className = lt.side === 'BUY' ? 'up' : 'down';
-                }
+                document.getElementById('total-val').innerText = `$${(port.cash + port.positions.reduce((a,b)=>a+b.amount,0)).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+                if (disc.lastTrade) { document.getElementById('last-action').innerText = `${disc.lastTrade.side} ${disc.lastTrade.symbol}`; document.getElementById('last-action').className = disc.lastTrade.side === 'BUY' ? 'up' : 'down'; }
 
-                // Sequential Chat Display with Typing
                 chatContainer.innerHTML = '';
-                addChatMessage('DeusFas', `[SYSTEM_REPORT] ${new Date(disc.timestamp).toLocaleTimeString()} 자율 매매 세션이 시작되었습니다.`);
-                
+                addChatMessage('DeusFas', `[CENTRAL] ${new Date(disc.timestamp).toLocaleTimeString()} ANALYSIS_RECEIVING...`);
                 for (const t of disc.thoughts) {
-                    await showTyping(t.agent, 1500);
-                    addChatMessage(t.agent, t.text);
+                    typingAgent.innerText = `${t.agent} THINKING`; typingUI.style.display = 'flex';
+                    await new Promise(r => setTimeout(r, 1000));
+                    typingUI.style.display = 'none'; addChatMessage(t.agent, t.text);
                 }
 
-                // Update Log
-                const logBody = document.getElementById('trade-log');
-                logBody.innerHTML = '';
-                [...port.positions, ...port.history].slice(0, 10).forEach(tr => {
+                const logBody = document.getElementById('trade-log'); logBody.innerHTML = '';
+                [...port.positions, ...port.history].slice(0, 8).forEach(tr => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${new Date(tr.time || tr.closeTime).toLocaleTimeString()}</td>
-                        <td class="${tr.side==='BUY'?'up':'down'}">${tr.side}</td>
-                        <td>$${tr.entry.toLocaleString()}</td>
-                        <td>${tr.size.toFixed(4)}</td>
-                        <td class="${(tr.pnl||0)>=0?'up':'down'}">$${(tr.pnl||0).toFixed(2)}</td>
-                    `;
+                    row.innerHTML = `<td>${new Date(tr.time || tr.closeTime).toLocaleTimeString()}</td><td class="${tr.side==='BUY'?'up':'down'}">${tr.side}</td><td>$${tr.entry.toLocaleString()}</td><td class="${(tr.pnl||0)>=0?'up':'down'}">$${(tr.pnl||0).toFixed(2)}</td>`;
                     logBody.appendChild(row);
                 });
-
-            } catch (e) { console.log('Syncing...'); }
+            } catch (e) { console.log('Link error'); }
         }
-
-        refreshData();
-        setInterval(refreshData, 20000);
+        setInterval(refreshData, 10000); refreshData();
     </script>
 </body>
 </html>
