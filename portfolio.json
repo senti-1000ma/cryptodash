@@ -1,5 +1,14 @@
 {
-  "cash": 30000,
-  "positions": [],
+  "cash": 25000,
+  "positions": [
+    {
+      "symbol": "BTCUSDT",
+      "side": "BUY",
+      "entry": 97200,
+      "amount": 5000,
+      "size": 0.051440329218107,
+      "time": "2026-02-08T10:16:07.952Z"
+    }
+  ],
   "history": []
 }
