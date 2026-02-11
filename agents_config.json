@@ -2,6 +2,6 @@
   "ollama_base_url": "https://references-rules-unlock-insight.trycloudflare.com",
   "agents": {
     "MasterAnalyst": "qwen2.5:14b-instruct",
-    "FinalProver": "deepseek-r1:14b"
+    "FinalProver": "gemma2:9b"
   }
 }
